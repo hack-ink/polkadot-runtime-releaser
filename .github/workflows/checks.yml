@@ -55,6 +55,6 @@ jobs:
         uses: vishnudxb/cancel-workflow@v1.2
         if: failure()
         with:
-          repo: hack-ink/<NAME>
+          repo: hack-ink/polkadot-runtime-releaser
           workflow_id: ${{ github.run_id }}
           access_token: ${{ github.token }}
