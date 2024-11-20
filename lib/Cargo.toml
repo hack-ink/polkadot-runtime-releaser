@@ -1,0 +1,18 @@
+[package]
+authors.workspace = true
+description       = "Polkadot Runtime Releaser library."
+edition.workspace = true
+name              = "prr-lib"
+readme            = "README.md"
+version.workspace = true
+
+[dependencies]
+reqwew       = { workspace = true, features = ["blocking", "charset", "http2", "json", "reqwest", "rustls-tls"] }
+serde        = { workspace = true, features = ["derive"] }
+subrpcer     = { workspace = true }
+# subwasmlib   = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio              = { workspace = true, features = ["macros"] }
+tracing-subscriber = { workspace = true }

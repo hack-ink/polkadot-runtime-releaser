@@ -1,0 +1,25 @@
+[package]
+authors.workspace = true
+build             = "build.rs"
+description       = "Polkadot Runtime Releaser CLI."
+edition.workspace = true
+name              = "prr-cli"
+readme            = "README.md"
+version.workspace = true
+
+[[bin]]
+name = "prr"
+path = "src/main.rs"
+
+[build-dependencies]
+# crates.io
+vergen-gitcl = { workspace = true, features = ["cargo"] }
+
+[dependencies]
+# crates.io
+anyhow             = { workspace = true }
+clap               = { workspace = true, features = ["derive"] }
+color-eyre         = { workspace = true }
+nix                = { workspace = true, features = ["user"] }
+tracing            = { workspace = true }
+tracing-subscriber = { workspace = true }

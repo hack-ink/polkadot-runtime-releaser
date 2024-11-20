@@ -1,5 +1,7 @@
+mod build;
+use build::BuildCommand;
+
 // crates.io
-use anyhow::Result;
 use clap::{
 	builder::{
 		styling::{AnsiColor, Effects},
@@ -7,7 +9,12 @@ use clap::{
 	},
 	Parser,
 };
-use tracing_subscriber::{reload::Handle, EnvFilter, Registry};
+// self
+use crate::prelude::*;
+
+pub trait Run {
+	fn run(self) -> Result<()>;
+}
 
 /// Cli.
 #[derive(Debug, Parser)]
@@ -24,16 +31,22 @@ use tracing_subscriber::{reload::Handle, EnvFilter, Registry};
 	styles = styles(),
 )]
 pub struct Cli {
-	/// Placeholder.
-	#[arg(long, short, value_name = "NUM", default_value_t = String::from("Welcome to use rust-initializer!"))]
-	placeholder: String,
+	/// Polkadot Runtime Releaser subcommands.
+	#[command(subcommand)]
+	subcommand: Subcommand,
 }
-impl Cli {
-	pub fn run(&self, _log_filter_handle: Handle<EnvFilter, Registry>) -> Result<()> {
-		dbg!(self);
-
-		Ok(())
+impl Run for Cli {
+	fn run(self) -> Result<()> {
+		match self.subcommand {
+			Subcommand::Build(build) => build.run(),
+		}
 	}
+}
+
+#[derive(Debug, Parser)]
+enum Subcommand {
+	/// Build the polkadot-sdk-based runtime.
+	Build(BuildCommand),
 }
 
 fn styles() -> Styles {
