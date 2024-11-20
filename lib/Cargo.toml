@@ -1,0 +1,28 @@
+[package]
+authors.workspace = true
+description       = "Polkadot Runtime Releaser library."
+edition.workspace = true
+name              = "polkadot-runtime-releaser-lib"
+readme            = "README.md"
+version.workspace = true
+
+[dependencies]
+# crates.io
+blake2                   = { workspace = true }
+md-5                     = { workspace = true }
+parity-scale-codec       = { workspace = true }
+reqwew                   = { workspace = true, features = ["blocking", "charset", "http2", "json", "reqwest", "rustls-tls"] }
+sc-executor              = { workspace = true }
+serde                    = { workspace = true, features = ["derive"] }
+sp-core                  = { workspace = true }
+sp-maybe-compressed-blob = { workspace = true }
+sp-state-machine         = { workspace = true }
+sp-version               = { workspace = true, features = ["serde"] }
+subrpcer                 = { workspace = true }
+thiserror                = { workspace = true }
+tracing                  = { workspace = true }
+
+[dev-dependencies]
+# crates.io
+tokio              = { workspace = true, features = ["macros"] }
+tracing-subscriber = { workspace = true }

@@ -33,23 +33,23 @@ jobs:
       - name: Pack (macOS)
         if: matrix.target.os == 'macos-latest'
         run: |
-          mv target/${{ matrix.target.name }}/ci-release/<NAME> .
-          zip <NAME>-${{ matrix.target.name }}.zip <NAME>
+          mv target/${{ matrix.target.name }}/ci-release/prr .
+          zip prr-${{ matrix.target.name }}.zip prr
       - name: Pack (Windows)
         if: matrix.target.os == 'windows-latest'
         run: |
-          mv target/${{ matrix.target.name }}/ci-release/<NAME>.exe .
-          Compress-Archive -Path <NAME>.exe -DestinationPath <NAME>-${{ matrix.target.name }}.zip
+          mv target/${{ matrix.target.name }}/ci-release/prr.exe .
+          Compress-Archive -Path prr.exe -DestinationPath prr-${{ matrix.target.name }}.zip
       - name: Pack (Linux)
         if: matrix.target.os == 'ubuntu-latest'
         run: |
-          mv target/${{ matrix.target.name }}/ci-release/<NAME> .
-          tar -czvf <NAME>-${{ matrix.target.name }}.tar.gz <NAME>
+          mv target/${{ matrix.target.name }}/ci-release/prr .
+          tar -czvf prr-${{ matrix.target.name }}.tar.gz prr
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: <NAME>-${{ matrix.target.name }}
-          path: <NAME>-${{ matrix.target.name }}.*
+          name: prr-${{ matrix.target.name }}
+          path: prr-${{ matrix.target.name }}.*
           retention-days: 1
 
   # release:
@@ -72,7 +72,7 @@ jobs:
       - name: Hash
         run: |
           mkdir -p artifacts
-          mv <NAME>-*/* artifacts/
+          mv prr-*/* artifacts/
           cd artifacts
           sha256sum * | tee ../SHA256
           md5sum * | tee ../MD5
