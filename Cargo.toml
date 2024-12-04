@@ -24,7 +24,7 @@ serde              = { version = "1.0" }
 subrpcer           = { version = "0.11" }
 subwasmlib         = { version = "0.13" }
 thiserror          = { version = "2.0" }
-tokio              = { version = "1.4" }
+tokio              = { version = "1.42" }
 toml               = { version = "0.8" }
 tracing            = { version = "0.1" }
 tracing-subscriber = { version = "0.3" }
