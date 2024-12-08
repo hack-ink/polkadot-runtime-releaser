@@ -1,0 +1,130 @@
+// std
+use std::{env, fs, path::PathBuf};
+// crates.io
+use clap::Parser;
+// self
+use crate::{cli::Run, prelude::*};
+use polkadot_runtime_releaser_lib::{docker::RunArgs, wasmer::Wasmer};
+
+const WASM_EXT: &str = "wasm";
+const WASM_EXT_COMPACT: &str = "compact.wasm";
+const WASM_EXT_COMPRESSED: &str = "compact.compressed.wasm";
+
+#[derive(Debug, Parser)]
+pub struct BuildCommand {
+	/// The polkadot-sdk-based project directory; by default, it is set to the current directory.
+	#[arg(long, short = 'd', value_name = "PATH")]
+	workdir: Option<PathBuf>,
+	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
+	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("latest"), conflicts_with = "overwrite_docker_image")]
+	image_version: String,
+	/// Overwrite the default docker image with the specified one.
+	/// Use `docker image ls` to list the available images on your system.
+	#[arg(
+		long,
+		short = 'i',
+		value_name = "REPOSITORY",
+		verbatim_doc_comment,
+		conflicts_with = "image_version"
+	)]
+	overwrite_docker_image: Option<String>,
+	/// The target directory of the cargo build.
+	#[arg(
+		long,
+		short = 'o',
+		value_name = "PATH",
+		default_value = "./polkadot-runtime-releaser-output"
+	)]
+	output_dir: PathBuf,
+	/// Whether to cache and use the output of the build.
+	#[arg(long)]
+	cache_output: bool,
+	/// Whether to cache and use the <~/.cargo/registry> registry.
+	#[arg(long)]
+	cache_registry: bool,
+	/// The target runtime crate to build.
+	/// This should be the name of the runtime crate in the <Cargo.toml> file.
+	#[arg(value_name = "RUNTIME")]
+	runtime: String,
+}
+impl Run for BuildCommand {
+	fn run(self) -> Result<()> {
+		let Self {
+			workdir,
+			image_version,
+			overwrite_docker_image,
+			output_dir,
+			cache_output,
+			cache_registry,
+			runtime,
+		} = self;
+		let workdir =
+			if let Some(workdir) = workdir { workdir.canonicalize()? } else { env::current_dir()? };
+		let output_dir = {
+			if !output_dir.exists() {
+				tracing::info!("creating the output directory {}", output_dir.display());
+
+				fs::create_dir(&output_dir)?;
+			}
+
+			output_dir.canonicalize()?
+		};
+		let container_output_dir =
+			format!("/{}", output_dir.file_name().expect("dir must exist").to_string_lossy());
+		let mut run_args = RunArgs::new(image_version, overwrite_docker_image);
+
+		run_args.with_env("CARGO_TARGET_DIR", &format!("{container_output_dir}/target"));
+		run_args.with_volume(&workdir.to_string_lossy(), "/workdir");
+		run_args.with_volume(&output_dir.to_string_lossy(), &container_output_dir);
+
+		let output_target_dir = output_dir.join("target");
+
+		if !cache_output && output_target_dir.exists() {
+			tracing::info!(
+				"purging previous output target directory {}",
+				output_target_dir.display()
+			);
+
+			fs::remove_dir_all(&output_target_dir)?;
+		}
+		if cache_registry {
+			let home = env::var("HOME")?;
+
+			run_args.with_volume(&format!("{home}/.cargo/git"), "/root/.cargo/git");
+			run_args.with_volume(&format!("{home}/.cargo/registry"), "/root/.cargo/registry");
+		}
+
+		let cmd = ["cargo", "b", "-r", "--locked", "-p", &runtime];
+
+		run_args.with_command(&cmd);
+		run_args.run()?;
+
+		let snake_case_rt = runtime.replace("-", "_");
+		let output_rt =
+			output_dir.join("target/release/wbuild").join(&runtime).join(&snake_case_rt);
+		let compressed_wasm = output_rt.with_extension(WASM_EXT_COMPRESSED);
+		let ver = Wasmer::load(&compressed_wasm)?.runtime_version()?.spec_version;
+		let rt_name = format!("{snake_case_rt}-{ver}");
+
+		fs::copy(compressed_wasm, output_dir.join(&rt_name).with_extension(WASM_EXT_COMPRESSED))?;
+		fs::copy(
+			output_rt.with_extension(WASM_EXT_COMPACT),
+			output_dir.join(&rt_name).with_extension(WASM_EXT_COMPACT),
+		)?;
+		fs::copy(
+			output_rt.with_extension(WASM_EXT),
+			output_dir.join(&rt_name).with_extension(WASM_EXT),
+		)?;
+
+		if !cache_output {
+			tracing::info!(
+				"cleaning up the output target directory {}",
+				output_target_dir.display()
+			);
+
+			fs::remove_dir_all(&output_target_dir)?;
+		}
+
+		Ok(())
+	}
+}
