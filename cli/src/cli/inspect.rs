@@ -5,10 +5,10 @@ use clap::Parser;
 use serde::Serialize;
 // self
 use crate::{cli::Run, prelude::*};
-use polkadot_runtime_releaser_lib::{hasher, wasmer::Wasmer};
+use prr_lib::{hasher, runtime::Version, wasmer::Wasmer};
 
 #[derive(Debug, Parser)]
-pub struct InspectCommand {
+pub struct InspectCmd {
 	/// Path to the WASM runtime.
 	#[arg(value_name = "PATH")]
 	path: PathBuf,
@@ -19,7 +19,7 @@ pub struct InspectCommand {
 	#[arg(short, long)]
 	verbose: bool,
 }
-impl Run for InspectCommand {
+impl Run for InspectCmd {
 	fn run(self) -> Result<()> {
 		let Self { path, check_version, verbose } = self;
 		let wasmer = Wasmer::load(&path)?;
@@ -29,7 +29,7 @@ impl Run for InspectCommand {
 		let blake2_256 = hasher::blake2_256(&wasmer.code);
 		let compressed_size = wasmer.compressed_size()?;
 		let decompressed_size = wasmer.decompressed_size()?;
-		let version = RuntimeVersion::of(&wasmer, verbose)?;
+		let version = wasmer.runtime_version(verbose)?;
 		let call_hashes = CallHashes::of(&wasmer, check_version);
 		let json = serde_json::to_string(&Output {
 			built_at,
@@ -63,47 +63,8 @@ struct Output {
 	compressed_size: usize,
 	#[serde(serialize_with = "util::ser_size_mb")]
 	decompressed_size: usize,
-	version: RuntimeVersion,
+	version: Version,
 	call_hashes: CallHashes,
-}
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "kebab-case")]
-struct RuntimeVersion {
-	spec_name: String,
-	impl_name: String,
-	authoring_version: u32,
-	spec_version: u32,
-	impl_version: u32,
-	#[serde(skip_serializing_if = "Vec::is_empty")]
-	apis: Vec<String>,
-	transaction_version: u32,
-	state_version: u8,
-}
-impl RuntimeVersion {
-	fn of(wasmer: &Wasmer, verbose: bool) -> Result<Self> {
-		let ver = wasmer.runtime_version()?;
-		let ver = RuntimeVersion {
-			spec_name: ver.spec_name.to_string(),
-			impl_name: ver.impl_name.to_string(),
-			authoring_version: ver.authoring_version,
-			spec_version: ver.spec_version,
-			impl_version: ver.impl_version,
-			apis: if verbose {
-				serde_json::to_value(ver.apis)?
-					.as_array()
-					.expect("apis must be array")
-					.iter()
-					.map(|v| v.as_str().expect("api must be string").to_owned())
-					.collect()
-			} else {
-				Vec::new()
-			},
-			transaction_version: ver.transaction_version,
-			state_version: ver.state_version,
-		};
-
-		Ok(ver)
-	}
 }
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -136,4 +97,4 @@ impl CallHashes {
 
 		Self { set_code, authorized_upgrade }
 	}
-}	
+}

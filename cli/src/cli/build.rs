@@ -4,22 +4,34 @@ use std::{env, fs, path::PathBuf};
 use clap::Parser;
 // self
 use crate::{cli::Run, prelude::*};
-use polkadot_runtime_releaser_lib::{docker::RunArgs, wasmer::Wasmer};
+use prr_lib::{docker::RunArgs, rust, wasmer::Wasmer};
 
 const WASM_EXT: &str = "wasm";
 const WASM_EXT_COMPACT: &str = "compact.wasm";
 const WASM_EXT_COMPRESSED: &str = "compact.compressed.wasm";
 
 #[derive(Debug, Parser)]
-pub struct BuildCommand {
-	/// The polkadot-sdk-based project directory; by default, it is set to the current directory.
-	#[arg(long, short = 'd', value_name = "PATH")]
-	workdir: Option<PathBuf>,
+pub struct BuildCmd {
+	/// The target runtime crate to build.
+	/// This should be the name of the runtime crate in the <Cargo.toml> file.
+	#[arg(value_name = "RUNTIME")]
+	runtime: String,
+	/// The features to enable for the runtime crate.
+	#[arg(long, short, value_name = "FEATURES")]
+	features: String,
+	/// Whether to store the compressed runtime only.
+	#[arg(long)]
+	no_compressed_only: bool,
+	/// The toolchain version to use for the build; by default, it is set to <stable>.
+	/// This won't take effect if there is a <rust-toolchain.toml> file in the project directory,
+	/// and that's the recommended way to specify the toolchain version.
+	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
+	toolchain_version: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
-	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("latest"), conflicts_with = "overwrite_docker_image")]
+	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.2"), conflicts_with = "overwrite_docker_image")]
 	image_version: String,
 	/// Overwrite the default docker image with the specified one.
-	/// Use `docker image ls` to list the available images on your system.
+	/// Use `docker images` to list the available images on your system.
 	#[arg(
 		long,
 		short = 'i',
@@ -28,6 +40,9 @@ pub struct BuildCommand {
 		conflicts_with = "image_version"
 	)]
 	overwrite_docker_image: Option<String>,
+	/// The polkadot-sdk-based project directory; by default, it is set to the current directory.
+	#[arg(long, short = 'd', value_name = "PATH")]
+	workdir: Option<PathBuf>,
 	/// The target directory of the cargo build.
 	#[arg(
 		long,
@@ -37,29 +52,33 @@ pub struct BuildCommand {
 	)]
 	output_dir: PathBuf,
 	/// Whether to cache and use the output of the build.
+	/// This is useful in local development.
 	#[arg(long)]
 	cache_output: bool,
-	/// Whether to cache and use the <~/.cargo/registry> registry.
+	/// Whether to cache and use the <$HOME/.cargo/registry> registry.
+	/// This is useful in local development.
 	#[arg(long)]
 	cache_registry: bool,
-	/// The target runtime crate to build.
-	/// This should be the name of the runtime crate in the <Cargo.toml> file.
-	#[arg(value_name = "RUNTIME")]
-	runtime: String,
 }
-impl Run for BuildCommand {
+impl Run for BuildCmd {
+	// ? Remove the created files to keep clean, e.g., `rust-toolchain.toml`.
 	fn run(self) -> Result<()> {
 		let Self {
-			workdir,
+			runtime,
+			features,
+			no_compressed_only,
+			toolchain_version,
 			image_version,
 			overwrite_docker_image,
+			workdir,
 			output_dir,
 			cache_output,
 			cache_registry,
-			runtime,
 		} = self;
-		let workdir =
-			if let Some(workdir) = workdir { workdir.canonicalize()? } else { env::current_dir()? };
+		let workdir = workdir.map(|w| w.canonicalize()).unwrap_or_else(env::current_dir)?;
+
+		rust::gen_toolchain_config(toolchain_version, &workdir)?;
+
 		let output_dir = {
 			if !output_dir.exists() {
 				tracing::info!("creating the output directory {}", output_dir.display());
@@ -94,28 +113,35 @@ impl Run for BuildCommand {
 			run_args.with_volume(&format!("{home}/.cargo/registry"), "/root/.cargo/registry");
 		}
 
-		let cmd = ["cargo", "b", "-r", "--locked", "-p", &runtime];
+		let mut cmd = vec!["cargo", "b", "-r", "--locked", "-p", &runtime];
+
+		if !features.is_empty() {
+			cmd.push("--features");
+			cmd.push(&features);
+		}
 
 		run_args.with_command(&cmd);
 		run_args.run()?;
 
-		let snake_case_rt = runtime.replace("-", "_");
+		let snake_case_rt = runtime.replace("-runtime", "_runtime");
 		let output_rt =
 			output_dir.join("target/release/wbuild").join(&runtime).join(&snake_case_rt);
 		let compressed_wasm = output_rt.with_extension(WASM_EXT_COMPRESSED);
-		let ver = Wasmer::load(&compressed_wasm)?.runtime_version()?.spec_version;
+		let ver = Wasmer::load(&compressed_wasm)?.runtime_version(true)?.spec_version;
 		let rt_name = format!("{snake_case_rt}-{ver}");
 
 		fs::copy(compressed_wasm, output_dir.join(&rt_name).with_extension(WASM_EXT_COMPRESSED))?;
-		fs::copy(
-			output_rt.with_extension(WASM_EXT_COMPACT),
-			output_dir.join(&rt_name).with_extension(WASM_EXT_COMPACT),
-		)?;
-		fs::copy(
-			output_rt.with_extension(WASM_EXT),
-			output_dir.join(&rt_name).with_extension(WASM_EXT),
-		)?;
 
+		if no_compressed_only {
+			fs::copy(
+				output_rt.with_extension(WASM_EXT_COMPACT),
+				output_dir.join(&rt_name).with_extension(WASM_EXT_COMPACT),
+			)?;
+			fs::copy(
+				output_rt.with_extension(WASM_EXT),
+				output_dir.join(&rt_name).with_extension(WASM_EXT),
+			)?;
+		}
 		if !cache_output {
 			tracing::info!(
 				"cleaning up the output target directory {}",

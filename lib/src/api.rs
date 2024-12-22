@@ -128,14 +128,13 @@ impl Api {
 /// API configuration.
 #[derive(Debug, Deserialize)]
 pub struct ApiConfig {
-	owner: String,
 	repo: String,
 	github_token: String,
 	runtime_configs: Vec<RuntimeConfig>,
 }
 impl ApiConfig {
 	fn releases(&self) -> String {
-		format!("https://api.github.com/repos/{}/{}/releases", self.owner, self.repo)
+		format!("https://api.github.com/repos/{}/releases", self.repo)
 	}
 }
 /// Runtime information.
@@ -172,26 +171,4 @@ where
 	D: Deserializer<'de>,
 {
 	<Vec<String>>::deserialize(d)?.iter().map(|s| s.parse().map_err(DeError::custom)).collect()
-}
-
-#[cfg(test)]
-#[tokio::test]
-async fn t() {
-	tracing_subscriber::fmt::init();
-
-	let api = Api::new(ApiConfig {
-		owner: "polkadot-fellows".to_string(),
-		repo: "runtimes".to_string(),
-		github_token: env!("GITHUB_TOKEN").into(),
-		runtime_configs: vec![
-			RuntimeConfig {
-				name: "kusama".into(),
-				rpc_endpoints: vec!["https://kusama-rpc.polkadot.io".parse().unwrap()],
-			},
-			RuntimeConfig {
-				name: "polkadot".into(),
-				rpc_endpoints: vec!["https://rpc.polkadot.io".parse().unwrap()],
-			},
-		],
-	});
 }

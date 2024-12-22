@@ -6,8 +6,9 @@ pub mod api;
 pub mod docker;
 pub mod error;
 pub mod hasher;
+pub mod runtime;
+pub mod rust;
 pub mod system;
-pub mod ver_cmp;
 pub mod wasmer;
 
 mod prelude {

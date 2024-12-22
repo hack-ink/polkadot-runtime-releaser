@@ -1,0 +1,30 @@
+name: "Polkadot Runtime Releaser Build Action"
+description: "Polkadot Runtime Releaser Build Action."
+branding:
+  icon: "check-circle"
+  color: "blue"
+
+inputs:
+  runtime:
+    description: "Target runtime crate to build."
+    required: true
+  features:
+    description: "Features to enable for the runtime crate."
+    required: false
+    default: ""
+  toolchain-version:
+    description: "Rust toolchain version to use."
+    required: false
+    default: "stable"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Fetch latest code
+      uses: actions/checkout@v4
+    - name: Build runtime
+      uses: ../build/action.yml
+      with:
+        runtime: ${{ inputs.runtime }}
+        features: ${{ inputs.features }}
+        toolchain-version: ${{ inputs.toolchain-version }}

@@ -27,4 +27,4 @@ serde_json         = { workspace = true }
 tracing            = { workspace = true }
 tracing-subscriber = { workspace = true }
 # self
-polkadot-runtime-releaser-lib = { workspace = true }
+prr-lib = { workspace = true }

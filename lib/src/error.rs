@@ -14,6 +14,8 @@ pub enum Error {
 	Compress(#[from] sp_maybe_compressed_blob::Error),
 	#[error(transparent)]
 	Reqwew(#[from] reqwew::error::Error),
+	#[error(transparent)]
+	SerdeJson(#[from] serde_json::Error),
 
 	#[error("{0}")]
 	Custom(String),

@@ -1,8 +1,11 @@
 mod build;
-use build::BuildCommand;
+use build::BuildCmd;
+
+mod cmp;
+use cmp::CmpCmd;
 
 mod inspect;
-use inspect::InspectCommand;
+use inspect::InspectCmd;
 
 // crates.io
 use clap::{
@@ -41,8 +44,9 @@ pub struct Cli {
 impl Run for Cli {
 	fn run(self) -> Result<()> {
 		match self.subcommand {
-			Subcommand::Build(build) => build.run(),
-			Subcommand::Inspect(inspect) => inspect.run(),
+			Subcommand::Build(cmd) => cmd.run(),
+			Subcommand::Cmp(cmd) => cmd.run(),
+			Subcommand::Inspect(cmd) => cmd.run(),
 		}
 	}
 }
@@ -50,9 +54,11 @@ impl Run for Cli {
 #[derive(Debug, Parser)]
 enum Subcommand {
 	/// Build the polkadot-sdk-based runtime.
-	Build(BuildCommand),
+	Build(BuildCmd),
+	/// Compare the latest GitHub release's runtime version with the on-chain's.
+	Cmp(CmpCmd),
 	/// Inspect the WASM runtime.
-	Inspect(InspectCommand),
+	Inspect(InspectCmd),
 }
 
 fn styles() -> Styles {

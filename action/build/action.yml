@@ -1,0 +1,28 @@
+name: "Polkadot Runtime Releaser Build Action"
+description: "Polkadot Runtime Releaser Build Action."
+branding:
+  icon: "check-circle"
+  color: "blue"
+
+inputs:
+  runtime:
+    description: "Target runtime crate to build."
+    required: true
+  features:
+    description: "Features to enable for the runtime crate."
+    required: false
+    default: ""
+  toolchain-version:
+    description: "Rust toolchain version to use."
+    required: false
+    default: "stable"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Polkadot Runtime Releaser
+      shell: bash
+      run: curl -L https://github.com/hack-ink/polkadot-runtime-releaser/releases/download/v0.1.0/polkadot-runtime-releaser.tar.gz | tar xz && chmod +x prr && mv prr /usr/local/bin/prr
+    - name: Build
+      shell: bash
+      run: prr build ${{ inputs.runtime }} -f ${{ inputs.features }} -t ${{ inputs.toolchain-version }}
