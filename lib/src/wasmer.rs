@@ -5,7 +5,6 @@ use std::{fs, path::Path};
 // crates.io
 use parity_scale_codec::Decode;
 use sc_executor::WasmExecutor;
-use serde::Serialize;
 use sp_core::traits::ReadRuntimeVersion;
 use sp_maybe_compressed_blob::CODE_BLOB_BOMB_LIMIT;
 use sp_state_machine::BasicExternalities;

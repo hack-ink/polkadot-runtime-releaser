@@ -1,11 +1,14 @@
 [package]
-authors.workspace = true
-build             = "build.rs"
-description       = "Polkadot Runtime Releaser CLI."
-edition.workspace = true
-name              = "polkadot-runtime-releaser-cli"
-readme            = "README.md"
-version.workspace = true
+authors.workspace    = true
+build                = "build.rs"
+description          = "Polkadot Runtime Releaser CLI."
+edition.workspace    = true
+homepage.workspace   = true
+license.workspace    = true
+name                 = "polkadot-runtime-releaser-cli"
+readme               = "../README.md"
+repository.workspace = true
+version.workspace    = true
 
 [[bin]]
 name = "prr"

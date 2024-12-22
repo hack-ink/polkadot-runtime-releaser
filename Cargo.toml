@@ -11,7 +11,7 @@ edition    = "2021"
 homepage   = "https://hack.ink/polkadot-runtime-releaser"
 license    = "GPL-3.0"
 repository = "https://github.com/hack-ink/polkadot-runtime-releaser"
-version    = "0.1.0"
+version    = "0.1.1"
 
 [workspace.dependencies]
 # crates.io
@@ -32,7 +32,6 @@ sp-core                  = { version = "34.0" }
 sp-maybe-compressed-blob = { version = "11.0" }
 sp-state-machine         = { version = "0.43" }
 sp-version               = { version = "37.0" }
-subrpcer                 = { version = "0.11" }
 thiserror                = { version = "2.0" }
 tokio                    = { version = "1.42" }
 toml                     = { version = "0.8" }

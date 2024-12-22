@@ -1,10 +1,13 @@
 [package]
-authors.workspace = true
-description       = "Polkadot Runtime Releaser library."
-edition.workspace = true
-name              = "polkadot-runtime-releaser-lib"
-readme            = "README.md"
-version.workspace = true
+authors.workspace    = true
+description          = "Polkadot Runtime Releaser library."
+edition.workspace    = true
+homepage.workspace   = true
+license.workspace    = true
+name                 = "polkadot-runtime-releaser-lib"
+readme               = "../README.md"
+repository.workspace = true
+version.workspace    = true
 
 [dependencies]
 # crates.io
@@ -20,7 +23,6 @@ sp-core                  = { workspace = true }
 sp-maybe-compressed-blob = { workspace = true }
 sp-state-machine         = { workspace = true }
 sp-version               = { workspace = true, features = ["serde"] }
-subrpcer                 = { workspace = true }
 thiserror                = { workspace = true }
 tracing                  = { workspace = true }
 

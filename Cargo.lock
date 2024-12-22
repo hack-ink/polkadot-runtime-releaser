@@ -47,15 +47,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "affix"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50e7ea84d3fa2009f355f8429a0b418a96849135a4188fadf384f59127d5d4bc"
-dependencies = [
- "convert_case",
-]
-
-[[package]]
 name = "ahash"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -149,9 +140,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1fd03a028ef38ba2276dce7e33fcd6369c158a1bca17946c4b1b701891c1ff7"
+checksum = "34ac096ce696dc2fcabef30516bb13c0a68a11d30131d3df6f04711467681b04"
 
 [[package]]
 name = "ark-bls12-377"
@@ -664,12 +655,6 @@ name = "constcat"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd7e35aee659887cbfb97aaf227ac12cad1a9d7c71e55ff3376839ed4e282d08"
-
-[[package]]
-name = "convert_case"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fb4a24b1aaf0fd0ce8b45161144d6f42cd91677fd5940fd431183eb023b3a2b8"
 
 [[package]]
 name = "core-foundation-sys"
@@ -2553,7 +2538,7 @@ checksum = "953ec861398dccce10c670dfeaf3ec4911ca479e9c02154b3a215178c5f566f2"
 
 [[package]]
 name = "polkadot-runtime-releaser-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "array-bytes 8.0.0",
@@ -2570,7 +2555,7 @@ dependencies = [
 
 [[package]]
 name = "polkadot-runtime-releaser-lib"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blake2",
  "md-5",
@@ -2584,7 +2569,6 @@ dependencies = [
  "sp-maybe-compressed-blob",
  "sp-state-machine",
  "sp-version",
- "subrpcer",
  "thiserror 2.0.9",
  "tokio",
  "tracing",
@@ -3977,17 +3961,6 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
-
-[[package]]
-name = "subrpcer"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4a00780fcd4ebedf099da78a562744c6f17bda08d1223928c3104dd26081b44"
-dependencies = [
- "affix",
- "serde",
- "serde_json",
-]
 
 [[package]]
 name = "substrate-bip39"

@@ -2,7 +2,6 @@
 
 //! Polkadot Runtime Releaser library.
 
-pub mod api;
 pub mod docker;
 pub mod error;
 pub mod hasher;

@@ -52,16 +52,6 @@ jobs:
           path: prr-${{ matrix.target.name }}.*
           retention-days: 1
 
-  # release:
-  #   name: Release
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Publish
-  #       uses: softprops/action-gh-release@v2
-  #       with:
-  #         discussion_category_name: Announcements
-  #         generate_release_notes: true
-
   release:
     name: Release
     runs-on: ubuntu-latest
@@ -94,4 +84,7 @@ jobs:
       - name: Login
         run: cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
       - name: Publish
-        run: cargo publish --locked
+        run: |
+          cargo publish --locked -p polkadot-runtime-releaser-lib
+          sleep 15
+          cargo publish --locked -p polkadot-runtime-releaser-cli

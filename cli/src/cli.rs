@@ -1,9 +1,6 @@
 mod build;
 use build::BuildCmd;
 
-mod cmp;
-use cmp::CmpCmd;
-
 mod inspect;
 use inspect::InspectCmd;
 
@@ -45,7 +42,6 @@ impl Run for Cli {
 	fn run(self) -> Result<()> {
 		match self.subcommand {
 			Subcommand::Build(cmd) => cmd.run(),
-			Subcommand::Cmp(cmd) => cmd.run(),
 			Subcommand::Inspect(cmd) => cmd.run(),
 		}
 	}
@@ -55,8 +51,6 @@ impl Run for Cli {
 enum Subcommand {
 	/// Build the polkadot-sdk-based runtime.
 	Build(BuildCmd),
-	/// Compare the latest GitHub release's runtime version with the on-chain's.
-	Cmp(CmpCmd),
 	/// Inspect the WASM runtime.
 	Inspect(InspectCmd),
 }
