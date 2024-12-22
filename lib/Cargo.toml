@@ -25,8 +25,3 @@ sp-state-machine         = { workspace = true }
 sp-version               = { workspace = true, features = ["serde"] }
 thiserror                = { workspace = true }
 tracing                  = { workspace = true }
-
-[dev-dependencies]
-# crates.io
-tokio              = { workspace = true, features = ["macros"] }
-tracing-subscriber = { workspace = true }
