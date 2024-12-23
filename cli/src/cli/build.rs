@@ -28,7 +28,7 @@ pub struct BuildCmd {
 	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
 	toolchain_version: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
-	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.2"), conflicts_with = "overwrite_docker_image")]
+	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.2"), conflicts_with = "override_docker_image")]
 	image_version: String,
 	/// Overwrite the default docker image with the specified one.
 	/// Use `docker images` to list the available images on your system.
@@ -39,7 +39,7 @@ pub struct BuildCmd {
 		verbatim_doc_comment,
 		conflicts_with = "image_version"
 	)]
-	overwrite_docker_image: Option<String>,
+	override_docker_image: Option<String>,
 	/// The polkadot-sdk-based project directory; by default, it is set to the current directory.
 	#[arg(long, short = 'd', value_name = "PATH")]
 	workdir: Option<PathBuf>,
@@ -69,7 +69,7 @@ impl Run for BuildCmd {
 			no_compressed_only,
 			toolchain_version,
 			image_version,
-			overwrite_docker_image,
+			override_docker_image,
 			workdir,
 			output_dir,
 			cache_output,
@@ -90,7 +90,7 @@ impl Run for BuildCmd {
 		};
 		let container_output_dir =
 			format!("/{}", output_dir.file_name().expect("dir must exist").to_string_lossy());
-		let mut run_args = RunArgs::new(image_version, overwrite_docker_image);
+		let mut run_args = RunArgs::new(image_version, override_docker_image);
 
 		run_args.with_env("CARGO_TARGET_DIR", &format!("{container_output_dir}/target"));
 		run_args.with_volume(&workdir.to_string_lossy(), "/workdir");

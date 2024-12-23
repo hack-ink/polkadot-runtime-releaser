@@ -24,20 +24,22 @@ impl Run for InspectCmd {
 		let Self { path, check_version, verbose } = self;
 		let wasmer = Wasmer::load(&path)?;
 		let built_at = fs::metadata(&path)?.created()?;
+		let compressed_size = wasmer.compressed()?.len();
+		let decompressed_size = wasmer.decompressed()?.len();
 		let md5 = hasher::md5(&wasmer.code);
 		let sha256 = hasher::sha256(&wasmer.code);
 		let blake2_256 = hasher::blake2_256(&wasmer.code);
-		let compressed_size = wasmer.compressed_size()?;
-		let decompressed_size = wasmer.decompressed_size()?;
+		let ipfs = ipfs_cid::generate_cid_v0(&wasmer.code)?;
 		let version = wasmer.runtime_version(verbose)?;
 		let call_hashes = CallHashes::of(&wasmer, check_version);
 		let json = serde_json::to_string(&Output {
 			built_at,
+			compressed_size,
+			decompressed_size,
 			md5,
 			sha256,
 			blake2_256,
-			compressed_size,
-			decompressed_size,
+			ipfs,
 			version,
 			call_hashes,
 		})?;
@@ -53,16 +55,17 @@ impl Run for InspectCmd {
 struct Output {
 	#[serde(serialize_with = "util::ser_system_time")]
 	built_at: SystemTime,
+	#[serde(serialize_with = "util::ser_size_mb")]
+	compressed_size: usize,
+	#[serde(serialize_with = "util::ser_size_mb")]
+	decompressed_size: usize,
 	#[serde(serialize_with = "array_bytes::ser_hex")]
 	md5: [u8; 16],
 	#[serde(serialize_with = "array_bytes::ser_hex")]
 	sha256: [u8; 32],
 	#[serde(serialize_with = "array_bytes::ser_hex")]
 	blake2_256: [u8; 32],
-	#[serde(serialize_with = "util::ser_size_mb")]
-	compressed_size: usize,
-	#[serde(serialize_with = "util::ser_size_mb")]
-	decompressed_size: usize,
+	ipfs: String,
 	version: Version,
 	call_hashes: CallHashes,
 }

@@ -1,7 +1,7 @@
 //! Polkadot Runtime Releaser WASM component.
 
 // std
-use std::{fs, path::Path};
+use std::{borrow::Cow, fs, path::Path};
 // crates.io
 use parity_scale_codec::Decode;
 use sc_executor::WasmExecutor;
@@ -31,19 +31,19 @@ impl Wasmer {
 		Ok(wasmer)
 	}
 
-	/// Get the size of the compressed code.
-	pub fn compressed_size(&self) -> Result<usize> {
+	/// Compress the code.
+	pub fn compressed(&self) -> Result<Vec<u8>> {
 		let code = sp_maybe_compressed_blob::compress(&self.code, CODE_BLOB_BOMB_LIMIT)
 			.ok_or(Error::OversizedCodeBlob(CODE_BLOB_BOMB_LIMIT))?;
 
-		Ok(code.len())
+		Ok(code)
 	}
 
-	/// Get the size of the decompressed code.
-	pub fn decompressed_size(&self) -> Result<usize> {
+	/// Decompress the code.
+	pub fn decompressed(&self) -> Result<Cow<[u8]>> {
 		let code = sp_maybe_compressed_blob::decompress(&self.code, CODE_BLOB_BOMB_LIMIT)?;
 
-		Ok(code.len())
+		Ok(code)
 	}
 
 	/// Read the runtime version.
