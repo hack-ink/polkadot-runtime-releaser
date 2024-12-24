@@ -1,8 +1,8 @@
 //! Polkadot Runtime Releaser runtime component.
 
 // crates.io
-use serde::Serialize;
 use sc_executor::RuntimeVersion;
+use serde::Serialize;
 // self
 use crate::prelude::*;
 
