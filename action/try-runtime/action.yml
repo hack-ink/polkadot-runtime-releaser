@@ -33,7 +33,7 @@ runs:
         chmod +x try-runtime && \
         mv try-runtime /usr/local/bin/try-runtime
     - name: Build runtime
-      uses: ../build/action.yml
+      uses: hack-ink/polkadot-runtime-releaser/action/override@v0.1.3
       with:
         runtime: ${{ inputs.runtime }}
         features: ${{ inputs.features }}
