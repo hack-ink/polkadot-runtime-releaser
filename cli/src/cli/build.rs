@@ -28,7 +28,7 @@ pub struct BuildCmd {
 	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
 	toolchain_version: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
-	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.5"), conflicts_with = "override_docker_image")]
+	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.6"), conflicts_with = "override_docker_image")]
 	image_version: String,
 	/// Overwrite the default docker image with the specified one.
 	/// Use `docker images` to list the available images on your system.
@@ -148,7 +148,9 @@ impl Run for BuildCmd {
 				output_target_dir.display()
 			);
 
-			fs::remove_dir_all(&output_target_dir)?;
+			if let Err(e) = fs::remove_dir_all(&output_target_dir) {
+				tracing::error!("failed to clean up the output target directory, due to {e}");
+			}
 		}
 
 		Ok(())
