@@ -27,13 +27,13 @@ runs:
   steps:
     - name: Setup try runtime CLI
       shell: bash
-      run: curl \
-        -L https://github.com/paritytech/try-runtime-cli/releases/download/v${{ inputs.try-runtime-version }}/try-runtime-x86_64-unknown-linux-musl \
-        -o try-runtime && \
-        chmod +x try-runtime && \
+      run: curl
+        -L https://github.com/paritytech/try-runtime-cli/releases/download/v${{ inputs.try-runtime-version }}/try-runtime-x86_64-unknown-linux-musl
+        -o try-runtime &&
+        chmod +x try-runtime &&
         mv try-runtime /usr/local/bin/try-runtime
     - name: Build runtime
-      uses: hack-ink/polkadot-runtime-releaser/action/build@v0.1.4
+      uses: hack-ink/polkadot-runtime-releaser/action/build@main
       with:
         runtime: ${{ inputs.runtime }}
         features: ${{ inputs.features }}
