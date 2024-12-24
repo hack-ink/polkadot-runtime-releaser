@@ -18,7 +18,7 @@ pub struct BuildCmd {
 	runtime: String,
 	/// The features to enable for the runtime crate.
 	#[arg(long, short, value_name = "FEATURES")]
-	features: String,
+	features: Option<String>,
 	/// Whether to store the compressed runtime only.
 	#[arg(long)]
 	no_compressed_only: bool,
@@ -28,7 +28,7 @@ pub struct BuildCmd {
 	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
 	toolchain_version: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
-	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.4"), conflicts_with = "override_docker_image")]
+	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.5"), conflicts_with = "override_docker_image")]
 	image_version: String,
 	/// Overwrite the default docker image with the specified one.
 	/// Use `docker images` to list the available images on your system.
@@ -115,9 +115,9 @@ impl Run for BuildCmd {
 
 		let mut cmd = vec!["cargo", "b", "-r", "--locked", "-p", &runtime];
 
-		if !features.is_empty() {
+		if let Some(feat) = &features {
 			cmd.push("--features");
-			cmd.push(&features);
+			cmd.push(feat);
 		}
 
 		run_args.with_command(&cmd);

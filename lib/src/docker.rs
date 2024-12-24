@@ -1,5 +1,7 @@
 //! Polkadot Runtime Releaser Docker component.
 
+// crates.io
+use atty::Stream;
 // self
 use crate::{
 	prelude::*,
@@ -50,7 +52,8 @@ impl<'a> RunArgs<'a> {
 }
 impl CliArgs for RunArgs<'_> {
 	fn to_cli_args(&self) -> Vec<&str> {
-		let mut args = vec!["run", "-it", "--rm"];
+		let maybe_it = if atty::is(Stream::Stdin) { "-it" } else { "-t" };
+		let mut args = vec!["run", maybe_it, "--rm"];
 
 		for env in &self.envs {
 			args.extend_from_slice(&["-e", env]);
@@ -81,7 +84,7 @@ fn to_cli_args_should_work() {
 			cli_args,
 			vec![
 				"run",
-				"-it",
+				"-t",
 				"--rm",
 				"-e",
 				"FOO=bar",
