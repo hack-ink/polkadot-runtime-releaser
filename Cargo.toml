@@ -11,7 +11,7 @@ edition    = "2021"
 homepage   = "https://hack.ink/polkadot-runtime-releaser"
 license    = "GPL-3.0"
 repository = "https://github.com/hack-ink/polkadot-runtime-releaser"
-version    = "0.1.1"
+version    = "0.1.2"
 
 [workspace.dependencies]
 # crates.io
@@ -21,18 +21,19 @@ blake2                   = { version = "0.10" }
 chrono                   = { version = "0.4" }
 clap                     = { version = "4.5" }
 color-eyre               = { version = "0.6" }
+frame-metadata           = { version = "18.0" }
 ipfs-cid                 = { version = "2.0" }
 md-5                     = { version = "0.10" }
 parity-scale-codec       = { version = "3.6" }
 reqwew                   = { version = "0.6", default-features = false }
 sc-executor              = { version = "0.40" }
+sc-executor-common       = { version = "0.35" }
 serde                    = { version = "1.0" }
 serde_json               = { version = "1.0" }
 sha2                     = { version = "0.10" }
 sp-core                  = { version = "34.0" }
 sp-maybe-compressed-blob = { version = "11.0" }
 sp-state-machine         = { version = "0.43" }
-sp-version               = { version = "37.0" }
 thiserror                = { version = "2.0" }
 tokio                    = { version = "1.42" }
 toml                     = { version = "0.8" }

@@ -11,11 +11,9 @@ inputs:
   features:
     description: "Features to enable for the runtime crate."
     required: false
-    default: ""
-  toolchain-version:
+  toolchain-ver:
     description: "Rust toolchain version to use."
     required: false
-    default: "stable"
   try-runtime-version:
     description: "Try Runtime CLI version to use."
     required: false
@@ -29,16 +27,30 @@ runs:
   steps:
     - name: Setup try runtime CLI
       shell: bash
-      run: curl -L https://github.com/paritytech/try-runtime-cli/releases/download/v${{ inputs.try-runtime-version }}/try-runtime-x86_64-unknown-linux-musl -o try-runtime && chmod +x try-runtime && mv try-runtime /usr/local/bin/try-runtime
+      run: curl \
+        -L https://github.com/paritytech/try-runtime-cli/releases/download/v${{ inputs.try-runtime-version }}/try-runtime-x86_64-unknown-linux-musl \
+        -o try-runtime && \
+        chmod +x try-runtime && \
+        mv try-runtime /usr/local/bin/try-runtime
     - name: Build runtime
       uses: ../build/action.yml
       with:
         runtime: ${{ inputs.runtime }}
         features: ${{ inputs.features }}
-        toolchain-version: ${{ inputs.toolchain-version }}
+        toolchain-ver: ${{ inputs.toolchain-ver }}
     - name: Try runtime
+      id: try_runtime
       shell: bash
-      run: try-runtime --runtime $(find polkadot-runtime-releaser-output -name "*.compact.compressed.wasm") on-runtime-upgrade live -u ${{ inputs.uri }} 2>&1 | tee output.log
+      run: |
+        echo "output<<EOF" >> $GITHUB_OUTPUT
+        try-runtime \
+          --runtime $(find ./polkadot-runtime-releaser-output \
+          -name "*.compact.compressed.wasm") \
+          on-runtime-upgrade \
+          live \
+          -u ${{ inputs.uri }} \
+          2>&1 >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
     - name: Comment
       uses: peter-evans/create-or-update-comment@v4
       with:
@@ -48,6 +60,6 @@ runs:
           <summary>Try Runtime Output for ${{ inputs.runtime }}</summary>
 
           ```
-          ${{ cat output.log }}
+          ${{ steps.try_runtime.outputs.output }}
           ```
           </details>

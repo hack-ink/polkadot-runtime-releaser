@@ -2,7 +2,7 @@
 
 // crates.io
 use serde::Serialize;
-use sp_version::RuntimeVersion;
+use sc_executor::RuntimeVersion;
 // self
 use crate::prelude::*;
 

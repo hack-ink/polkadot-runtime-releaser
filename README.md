@@ -26,7 +26,20 @@ cargo install polkadot-runtime-releaser-cli
 
 #### Install from GitHub
 ```sh
-curl -L ..
+# macOS
+curl -L https://github.com/hack-ink/polkadot-runtime-releaser/releases/latest/download/prr-aarch64-apple-darwin.zip \
+	-o prr.zip &&
+	unzip prr.zip &&
+	chmod u+x prr &&
+	rm prr.zip
+
+# Linux
+curl -L https://github.com/hack-ink/polkadot-runtime-releaser/releases/latest/download/prr-x86_64-unknown-linux-gnu.tar.gz |
+	tar xz &&
+	chmod u+x prr
+
+# If you like to move the binary to `~/.local/bin`. (OPTIONAL)
+mkdir -p ~/.local/bin && mv prr ~/.local/bin
 ```
 
 ### Rust Toolchain

@@ -1,7 +1,7 @@
 // std
 use std::time::SystemTime;
 // crates.io
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, SecondsFormat, Utc};
 use serde::Serializer;
 
 pub fn ser_system_time<S>(time: &SystemTime, serializer: S) -> Result<S::Ok, S::Error>
@@ -10,7 +10,7 @@ where
 {
 	let date = <DateTime<Utc>>::from(*time);
 
-	serializer.serialize_str(&date.to_rfc3339())
+	serializer.serialize_str(&date.to_rfc3339_opts(SecondsFormat::Secs, true))
 }
 
 pub fn ser_size_mb<S>(size: &usize, serializer: S) -> Result<S::Ok, S::Error>
@@ -50,6 +50,6 @@ fn ser_should_work() {
 			size: 1024 * 1024
 		})
 		.unwrap(),
-		r#"{"time":"2021-08-01T00:00:00+00:00","size":"1.00 MB (1,048,576 bytes)"}"#
+		r#"{"time":"2021-08-01T00:00:00Z","size":"1.00 MB (1,048,576 bytes)"}"#
 	)
 }

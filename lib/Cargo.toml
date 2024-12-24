@@ -12,16 +12,17 @@ version.workspace    = true
 [dependencies]
 # crates.io
 blake2                   = { workspace = true }
+frame-metadata           = { workspace = true }
 md-5                     = { workspace = true }
 parity-scale-codec       = { workspace = true }
 reqwew                   = { workspace = true, features = ["blocking", "charset", "http2", "json", "reqwest", "rustls-tls"] }
 sc-executor              = { workspace = true }
+sc-executor-common       = { workspace = true }
 serde                    = { workspace = true, features = ["derive"] }
 serde_json               = { workspace = true }
 sha2                     = { workspace = true }
 sp-core                  = { workspace = true }
 sp-maybe-compressed-blob = { workspace = true }
 sp-state-machine         = { workspace = true }
-sp-version               = { workspace = true, features = ["serde"] }
 thiserror                = { workspace = true }
 tracing                  = { workspace = true }

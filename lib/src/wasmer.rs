@@ -3,12 +3,13 @@
 // std
 use std::{borrow::Cow, fs, path::Path};
 // crates.io
+use frame_metadata::{RuntimeMetadata, RuntimeMetadataPrefixed};
 use parity_scale_codec::Decode;
-use sc_executor::WasmExecutor;
+use sc_executor::{RuntimeVersion, WasmExecutor};
+use sc_executor_common::runtime_blob::RuntimeBlob;
 use sp_core::traits::ReadRuntimeVersion;
 use sp_maybe_compressed_blob::CODE_BLOB_BOMB_LIMIT;
 use sp_state_machine::BasicExternalities;
-use sp_version::RuntimeVersion;
 // self
 use crate::{prelude::*, runtime::Version};
 
@@ -56,5 +57,20 @@ impl Wasmer {
 		let ver = Version::load(ver, simplify)?;
 
 		Ok(ver)
+	}
+
+	/// Read the runtime metadata.
+	pub fn metadata(&self) -> Result<RuntimeMetadata> {
+		let metadata_compressed = self.executor.uncached_call(
+			RuntimeBlob::uncompress_if_needed(&self.code)?,
+			&mut BasicExternalities::default(),
+			true,
+			"Metadata_metadata",
+			&[],
+		)?;
+		let metadata_encoded = <Vec<u8>>::decode(&mut &*metadata_compressed)?;
+		let metadata = RuntimeMetadataPrefixed::decode(&mut &*metadata_encoded)?;
+
+		Ok(metadata.1)
 	}
 }

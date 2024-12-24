@@ -1485,6 +1485,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "frame-metadata"
+version = "18.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "daaf440c68eb2c3d88e5760fe8c7af3f9fee9181fab6c2f2c4e7cc48dcc40bb8"
+dependencies = [
+ "cfg-if",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+]
+
+[[package]]
 name = "fs-err"
 version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2777,7 +2789,7 @@ checksum = "953ec861398dccce10c670dfeaf3ec4911ca479e9c02154b3a215178c5f566f2"
 
 [[package]]
 name = "polkadot-runtime-releaser-cli"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "array-bytes 8.0.0",
@@ -2795,20 +2807,21 @@ dependencies = [
 
 [[package]]
 name = "polkadot-runtime-releaser-lib"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "blake2",
+ "frame-metadata 18.0.0",
  "md-5",
  "parity-scale-codec",
  "reqwew",
  "sc-executor",
+ "sc-executor-common",
  "serde",
  "serde_json",
  "sha2 0.10.8",
  "sp-core",
  "sp-maybe-compressed-blob",
  "sp-state-machine",
- "sp-version",
  "thiserror 2.0.9",
  "tracing",
 ]
@@ -4008,7 +4021,7 @@ version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a616fa51350b35326682a472ee8e6ba742fdacb18babac38ecd46b3e05ead869"
 dependencies = [
- "frame-metadata",
+ "frame-metadata 16.0.0",
  "parity-scale-codec",
  "scale-info",
 ]

@@ -5,26 +5,56 @@ branding:
   color: "blue"
 
 inputs:
+  repository:
+    description: "Repository to fetch the runtime code from."
+    required: true
+  ref:
+    description: "Branch, tag, or commit of the runtime repository to fetch."
+    required: true
   runtime:
     description: "Target runtime crate to build."
     required: true
   features:
     description: "Features to enable for the runtime crate."
-    required: false
-    default: ""
-  toolchain-version:
+    required: true
+  toolchain-ver:
     description: "Rust toolchain version to use."
     required: false
-    default: "stable"
+  token:
+    description: "GitHub token for authentication."
+    required: true
+    default: ${{ github.token }}
 
 runs:
   using: "composite"
   steps:
     - name: Fetch latest code
       uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.runtime }}
+        path: override
+    - name: Fetch runtime code
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.repository }}
+        ref: ${{ inputs.ref }}
+        path: runtime
     - name: Build runtime
       uses: ../build/action.yml
       with:
         runtime: ${{ inputs.runtime }}
         features: ${{ inputs.features }}
-        toolchain-version: ${{ inputs.toolchain-version }}
+        toolchain-ver: ${{ inputs.toolchain-ver }}
+        workdir: runtime
+        output-dir: override/${{ inputs.features }}
+    - name: Commit changes
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        cd override
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Override `${{ inputs.ref }}`"
+        git push
