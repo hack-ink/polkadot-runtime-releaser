@@ -40,7 +40,7 @@ runs:
         ref: ${{ inputs.ref }}
         path: runtime
     - name: Build runtime
-      uses: hack-ink/polkadot-runtime-releaser/action/override@v0.1.3
+      uses: hack-ink/polkadot-runtime-releaser/action/build@v0.1.4
       with:
         runtime: ${{ inputs.runtime }}
         features: ${{ inputs.features }}
