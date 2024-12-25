@@ -12,13 +12,13 @@ inputs:
     description: "Features to enable for the runtime crate."
     required: false
   toolchain-ver:
-    description: "Rust toolchain version to use."
+    description: "Rust toolchain version to use. Default is reading `rust-toolchain.toml` or `stable`."
     required: false
   workdir:
-    description: "Working directory for the runtime."
+    description: "Working directory for the runtime. Default is the current directory."
     required: false
   output-dir:
-    description: "Output directory for the runtime."
+    description: "Output directory for the runtime. Default is `polkadot-runtime-releaser-output`."
     required: false
 
 runs:
