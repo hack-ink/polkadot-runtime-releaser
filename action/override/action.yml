@@ -43,7 +43,7 @@ runs:
         ref: ${{ inputs.ref }}
         path: runtime
     - name: Build runtime
-      uses: hack-ink/polkadot-runtime-releaser/action/build@0.1.8
+      uses: hack-ink/polkadot-runtime-releaser/action/build@v0.1.8
       with:
         runtime: ${{ inputs.runtime }}
         override-runtime-name: ${{ inputs.override-runtime-name }}
