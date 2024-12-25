@@ -28,7 +28,7 @@ pub struct BuildCmd {
 	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
 	toolchain_version: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
-	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.6"), conflicts_with = "override_docker_image")]
+	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.7"), conflicts_with = "override_docker_image")]
 	image_version: String,
 	/// Overwrite the default docker image with the specified one.
 	/// Use `docker images` to list the available images on your system.
@@ -92,7 +92,9 @@ impl Run for BuildCmd {
 			format!("/{}", output_dir.file_name().expect("dir must exist").to_string_lossy());
 		let mut run_args = RunArgs::new(image_version, override_docker_image);
 
-		run_args.with_env("CARGO_TARGET_DIR", &format!("{container_output_dir}/target"));
+		run_args.with_env("HOST_UID", users::get_current_uid());
+		run_args.with_env("HOST_GID", users::get_current_gid());
+		run_args.with_env("CARGO_TARGET_DIR", format!("{container_output_dir}/target"));
 		run_args.with_volume(&workdir.to_string_lossy(), "/workdir");
 		run_args.with_volume(&output_dir.to_string_lossy(), &container_output_dir);
 
@@ -125,7 +127,7 @@ impl Run for BuildCmd {
 
 		let snake_case_rt = runtime.replace("-runtime", "_runtime");
 		let output_rt =
-			output_dir.join("target/release/wbuild").join(&runtime).join(&snake_case_rt);
+			output_target_dir.join("release/wbuild").join(&runtime).join(&snake_case_rt);
 		let compressed_wasm = output_rt.with_extension(WASM_EXT_COMPRESSED);
 		let ver = Wasmer::load(&compressed_wasm)?.runtime_version(true)?.spec_version;
 		let rt_name = format!("{snake_case_rt}-{ver}");
@@ -148,9 +150,7 @@ impl Run for BuildCmd {
 				output_target_dir.display()
 			);
 
-			if let Err(e) = fs::remove_dir_all(&output_target_dir) {
-				tracing::error!("failed to clean up the output target directory, due to {e}");
-			}
+			fs::remove_dir_all(&output_target_dir)?;
 		}
 
 		Ok(())

@@ -1,5 +1,7 @@
 //! Polkadot Runtime Releaser Docker component.
 
+// std
+use std::fmt::Display;
 // crates.io
 use atty::Stream;
 // self
@@ -29,7 +31,10 @@ impl<'a> RunArgs<'a> {
 	}
 
 	/// Set the environment variable.
-	pub fn with_env(&mut self, key: &str, value: &str) {
+	pub fn with_env<T>(&mut self, key: &str, value: T)
+	where
+		T: Display,
+	{
 		self.envs.push(format!("{key}={value}"));
 	}
 
