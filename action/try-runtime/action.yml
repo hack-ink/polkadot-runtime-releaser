@@ -6,10 +6,10 @@ branding:
 
 inputs:
   runtime:
-    description: "Target runtime crate to build."
+    description: "Target runtime to build."
     required: true
   features:
-    description: "Features to enable for the runtime crate."
+    description: "Features to enable for the runtime."
     required: false
   toolchain-ver:
     description: "Rust toolchain version to use."

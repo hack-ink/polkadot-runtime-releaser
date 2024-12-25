@@ -1,0 +1,32 @@
+name: "Polkadot Runtime Releaser Inspect Action"
+description: "Polkadot Runtime Releaser Inspect Action."
+branding:
+  icon: "check-circle"
+  color: "blue"
+
+inputs:
+  runtime:
+    description: "Target runtime to inspect."
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Polkadot Runtime Releaser
+      shell: bash
+      run: curl
+        -L https://github.com/hack-ink/polkadot-runtime-releaser/releases/download/v0.1.7/prr-x86_64-unknown-linux-gnu.tar.gz |
+        tar xz &&
+        chmod u+x prr &&
+        mv prr /usr/local/bin/prr
+    - name: Inspect runtime
+      id: inspect
+      shell: bash
+      run: |
+        RESULT=$(prr inspect ${{ inputs.runtime }})
+        echo "result=${RESULT}" >> "$GITHUB_OUTPUT"
+
+outputs:
+  result:
+    description: "Inspect result."
+    value: ${{ steps.inspect.outputs.result }}

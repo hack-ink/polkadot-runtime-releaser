@@ -12,10 +12,10 @@ inputs:
     description: "Branch, tag, or commit of the runtime repository to fetch."
     required: true
   runtime:
-    description: "Target runtime crate to build."
+    description: "Target runtime to build."
     required: true
   features:
-    description: "Features to enable for the runtime crate."
+    description: "Features to enable for the runtime."
     required: true
   toolchain-ver:
     description: "Rust toolchain version to use."

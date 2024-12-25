@@ -6,10 +6,10 @@ branding:
 
 inputs:
   runtime:
-    description: "Target runtime crate to build."
+    description: "Target runtime to build."
     required: true
   features:
-    description: "Features to enable for the runtime crate."
+    description: "Features to enable for the runtime."
     required: false
   toolchain-ver:
     description: "Rust toolchain version to use. Default is reading `rust-toolchain.toml` or `stable`."
@@ -32,10 +32,10 @@ runs:
         chmod u+x prr &&
         mv prr /usr/local/bin/prr
     - name: Build runtime
-      id: build
       shell: bash
       run: |
         CMD="prr build ${{ inputs.runtime }}"
+
         if [ ! -z "${{ inputs.features }}" ]; then
           CMD="$CMD -f ${{ inputs.features }}"
         fi
@@ -49,10 +49,4 @@ runs:
           CMD="$CMD -o ${{ inputs.output-dir }}"
         fi
 
-        RESULT=$(${CMD})
-        echo "result=${RESULT}" >> "$GITHUB_OUTPUT"
-
-outputs:
-  result:
-    description: "Build result."
-    value: ${{ steps.build.outputs.result }}
+        eval $CMD
