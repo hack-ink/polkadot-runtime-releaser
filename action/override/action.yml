@@ -14,6 +14,9 @@ inputs:
   runtime:
     description: "Target runtime to build."
     required: true
+  override-runtime-name:
+    description: "The name to use matching the runtime artifacts."
+    required: false
   features:
     description: "Features to enable for the runtime."
     required: true
@@ -40,9 +43,10 @@ runs:
         ref: ${{ inputs.ref }}
         path: runtime
     - name: Build runtime
-      uses: hack-ink/polkadot-runtime-releaser/action/build@main
+      uses: hack-ink/polkadot-runtime-releaser/action/build@0.1.8
       with:
         runtime: ${{ inputs.runtime }}
+        override-runtime-name: ${{ inputs.override-runtime-name }}
         features: ${{ inputs.features }}
         toolchain-ver: ${{ inputs.toolchain-ver }}
         workdir: runtime

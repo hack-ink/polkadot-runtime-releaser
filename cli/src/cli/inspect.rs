@@ -10,13 +10,13 @@ use prr_lib::{hasher, runtime::Version, wasmer::Wasmer};
 #[derive(Debug, Parser)]
 pub struct InspectCmd {
 	/// Path to the WASM runtime.
-	#[arg(value_name = "PATH")]
+	#[arg(value_name = "PATH", verbatim_doc_comment)]
 	path: PathBuf,
 	/// Whether to check the runtime version in the `ParachainSystem::authorized_upgrade` call.
-	#[arg(long, default_value_t = true)]
+	#[arg(long, default_value_t = true, verbatim_doc_comment)]
 	check_version: bool,
 	/// Whether to print verbose output.
-	#[arg(short, long)]
+	#[arg(short, long, verbatim_doc_comment)]
 	verbose: bool,
 }
 impl Run for InspectCmd {

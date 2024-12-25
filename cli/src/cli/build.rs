@@ -12,25 +12,43 @@ const WASM_EXT_COMPRESSED: &str = "compact.compressed.wasm";
 
 #[derive(Debug, Parser)]
 pub struct BuildCmd {
-	/// The target runtime crate to build.
+	/// The target runtime to build.
+	///
 	/// This should be the name of the runtime crate in the <Cargo.toml> file.
-	#[arg(value_name = "RUNTIME")]
+	#[arg(value_name = "RUNTIME", verbatim_doc_comment)]
 	runtime: String,
-	/// The features to enable for the runtime crate.
-	#[arg(long, short, value_name = "FEATURES")]
+	/// The name to use matching the runtime artifacts.
+	/// This is useful when the runtime crate name is different from the runtime name.
+	///
+	/// For example, `staging-kusama-runtime`.
+	/// With this option, you can specify the runtime name to be `kusama`,
+	/// and it will match the `kusama_runtime*.wasm` artifacts.
+	#[arg(long, short = 'n', value_name = "NAME", verbatim_doc_comment)]
+	override_runtime_name: Option<String>,
+	/// The features to enable for the runtime.
+	#[arg(long, short, value_name = "FEATURES", verbatim_doc_comment)]
 	features: Option<String>,
 	/// Whether to store the compressed runtime only.
-	#[arg(long)]
+	#[arg(long, verbatim_doc_comment)]
 	no_compressed_only: bool,
 	/// The toolchain version to use for the build; by default, it is set to <stable>.
+	///
 	/// This won't take effect if there is a <rust-toolchain.toml> file in the project directory,
 	/// and that's the recommended way to specify the toolchain version.
 	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
 	toolchain_version: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
-	#[arg(long, short = 'v', value_name = "VER", default_value_t = String::from("0.1.7"), conflicts_with = "override_docker_image")]
+	#[arg(
+		long,
+		short = 'v',
+		value_name = "VER",
+		default_value_t = String::from("0.1.8"),
+		verbatim_doc_comment,
+		conflicts_with = "override_docker_image"
+	)]
 	image_version: String,
 	/// Overwrite the default docker image with the specified one.
+	///
 	/// Use `docker images` to list the available images on your system.
 	#[arg(
 		long,
@@ -41,23 +59,24 @@ pub struct BuildCmd {
 	)]
 	override_docker_image: Option<String>,
 	/// The polkadot-sdk-based project directory; by default, it is set to the current directory.
-	#[arg(long, short = 'd', value_name = "PATH")]
+	#[arg(long, short = 'd', value_name = "PATH", verbatim_doc_comment)]
 	workdir: Option<PathBuf>,
 	/// The target directory of the cargo build.
 	#[arg(
 		long,
 		short = 'o',
 		value_name = "PATH",
-		default_value = "./polkadot-runtime-releaser-output"
+		default_value = "./polkadot-runtime-releaser-output",
+		verbatim_doc_comment
 	)]
 	output_dir: PathBuf,
 	/// Whether to cache and use the output of the build.
 	/// This is useful in local development.
-	#[arg(long)]
+	#[arg(long, verbatim_doc_comment)]
 	cache_output: bool,
 	/// Whether to cache and use the <$HOME/.cargo/registry> registry.
 	/// This is useful in local development.
-	#[arg(long)]
+	#[arg(long, verbatim_doc_comment)]
 	cache_registry: bool,
 }
 impl Run for BuildCmd {
@@ -65,6 +84,7 @@ impl Run for BuildCmd {
 	fn run(self) -> Result<()> {
 		let Self {
 			runtime,
+			override_runtime_name,
 			features,
 			no_compressed_only,
 			toolchain_version,
@@ -125,7 +145,11 @@ impl Run for BuildCmd {
 		run_args.with_command(&cmd);
 		run_args.run()?;
 
-		let snake_case_rt = runtime.replace("-runtime", "_runtime");
+		let snake_case_rt = if let Some(name) = override_runtime_name {
+			format!("{name}_runtime")
+		} else {
+			runtime.replace("-runtime", "_runtime")
+		};
 		let output_rt =
 			output_target_dir.join("release/wbuild").join(&runtime).join(&snake_case_rt);
 		let compressed_wasm = output_rt.with_extension(WASM_EXT_COMPRESSED);
