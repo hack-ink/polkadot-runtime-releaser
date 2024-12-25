@@ -31,7 +31,7 @@ runs:
         tar xz &&
         chmod u+x prr &&
         mv prr /usr/local/bin/prr
-    - name: Build
+    - name: Build runtime
       id: build
       shell: bash
       run: |

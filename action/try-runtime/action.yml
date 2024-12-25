@@ -51,7 +51,7 @@ runs:
           -u ${{ inputs.uri }} \
           2>&1 >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
-    - name: Comment
+    - name: Comment result
       uses: peter-evans/create-or-update-comment@v4
       with:
         issue-number: ${{ github.event.pull_request.number }}
