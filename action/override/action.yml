@@ -55,6 +55,7 @@ runs:
         cd override
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git pull --rebase origin ${{ inputs.runtime }}
         git add .
         git commit -m "Override `${{ inputs.ref }}`"
         git push
