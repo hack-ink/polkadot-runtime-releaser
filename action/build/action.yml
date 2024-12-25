@@ -32,6 +32,7 @@ runs:
         chmod u+x prr &&
         mv prr /usr/local/bin/prr
     - name: Build
+      id: build
       shell: bash
       run: |
         CMD="prr build ${{ inputs.runtime }}"
@@ -47,4 +48,11 @@ runs:
         if [ ! -z "${{ inputs.output-dir }}" ]; then
           CMD="$CMD -o ${{ inputs.output-dir }}"
         fi
-        eval "$CMD"
+
+        RESULT=$(${CMD})
+        echo "result=${RESULT}" >> "$GITHUB_OUTPUT"
+
+outputs:
+  result:
+    description: "Build result."
+    value: ${{ steps.build.outputs.result }}
