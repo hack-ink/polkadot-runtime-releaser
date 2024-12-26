@@ -24,7 +24,7 @@ where
 		return Ok(());
 	}
 
-	tracing::info!("creating toolchain config {}", toml.display());
+	tracing::info!("creating toolchain config {toml:?}");
 
 	let toolchain = toolchain_config_of(ver);
 

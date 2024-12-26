@@ -13,16 +13,22 @@ pub struct InspectCmd {
 	#[arg(value_name = "PATH", verbatim_doc_comment)]
 	path: PathBuf,
 	/// Whether to check the runtime version in the `ParachainSystem::authorized_upgrade` call.
-	#[arg(long, default_value_t = true, verbatim_doc_comment)]
-	check_version: bool,
+	#[arg(long, verbatim_doc_comment)]
+	no_check_version: bool,
+	/// Whether to beautify the JSON output.
+	#[arg(long, short, verbatim_doc_comment)]
+	beautify: bool,
 	/// Whether to print verbose output.
-	#[arg(short, long, verbatim_doc_comment)]
+	#[arg(long, short, verbatim_doc_comment)]
 	verbose: bool,
 }
-impl Run for InspectCmd {
-	fn run(self) -> Result<()> {
-		let Self { path, check_version, verbose } = self;
-		let wasmer = Wasmer::load(&path)?;
+impl InspectCmd {
+	pub fn new(path: PathBuf, no_check_version: bool, beautify: bool, verbose: bool) -> Self {
+		Self { path, no_check_version, beautify, verbose }
+	}
+
+	pub fn inspect(self, wasmer: Wasmer) -> Result<String> {
+		let Self { path, no_check_version, beautify, verbose } = self;
 		let built_at = fs::metadata(&path)?.created()?;
 		let compressed = wasmer.compressed()?.len();
 		let uncompressed = wasmer.decompressed()?.len();
@@ -35,8 +41,22 @@ impl Run for InspectCmd {
 		let runtime = wasmer.runtime_version(verbose)?;
 		let metadata = wasmer.metadata()?.version();
 		let version = Ver { runtime, metadata };
+		let check_version = !no_check_version;
 		let call_hash = CallHash::of(&wasmer, check_version);
-		let json = serde_json::to_string(&Output { built_at, size, hash, version, call_hash })?;
+		let output = Output { built_at, size, hash, version, call_hash };
+		let json = if beautify {
+			serde_json::to_string_pretty(&output)?
+		} else {
+			serde_json::to_string(&output)?
+		};
+
+		Ok(json)
+	}
+}
+impl Run for InspectCmd {
+	fn run(self) -> Result<()> {
+		let wasmer = Wasmer::load(&self.path)?;
+		let json = self.inspect(wasmer)?;
 
 		println!("{json}");
 

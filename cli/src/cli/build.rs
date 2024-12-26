@@ -3,7 +3,10 @@ use std::{env, fs, path::PathBuf};
 // crates.io
 use clap::Parser;
 // self
-use crate::{cli::Run, prelude::*};
+use crate::{
+	cli::{InspectCmd, Run},
+	prelude::*,
+};
 use prr_lib::{docker::RunArgs, rust, wasmer::Wasmer};
 
 const WASM_EXT: &str = "wasm";
@@ -17,20 +20,15 @@ pub struct BuildCmd {
 	/// This should be the name of the runtime crate in the <Cargo.toml> file.
 	#[arg(value_name = "RUNTIME", verbatim_doc_comment)]
 	runtime: String,
-	/// The name to use matching the runtime artifacts.
-	/// This is useful when the runtime crate name is different from the runtime name.
-	///
-	/// For example, `staging-kusama-runtime`.
-	/// With this option, you can specify the runtime name to be `kusama`,
-	/// and it will match the `kusama_runtime*.wasm` artifacts.
-	#[arg(long, short = 'n', value_name = "NAME", verbatim_doc_comment)]
-	override_runtime_name: Option<String>,
 	/// The features to enable for the runtime.
 	#[arg(long, short, value_name = "FEATURES", verbatim_doc_comment)]
 	features: Option<String>,
 	/// Whether to store the compressed runtime only.
 	#[arg(long, verbatim_doc_comment)]
 	no_compressed_only: bool,
+	/// Whether to generate the digest file for the runtime.
+	#[arg(long, verbatim_doc_comment)]
+	no_digest: bool,
 	/// The toolchain version to use for the build; by default, it is set to <stable>.
 	///
 	/// This won't take effect if there is a <rust-toolchain.toml> file in the project directory,
@@ -42,7 +40,7 @@ pub struct BuildCmd {
 		long,
 		short = 'v',
 		value_name = "VER",
-		default_value_t = String::from("0.1.8"),
+		default_value_t = String::from("0.1.9"),
 		verbatim_doc_comment,
 		conflicts_with = "override_docker_image"
 	)]
@@ -84,9 +82,9 @@ impl Run for BuildCmd {
 	fn run(self) -> Result<()> {
 		let Self {
 			runtime,
-			override_runtime_name,
 			features,
 			no_compressed_only,
+			no_digest,
 			toolchain_version,
 			image_version,
 			override_docker_image,
@@ -101,7 +99,7 @@ impl Run for BuildCmd {
 
 		let output_dir = {
 			if !output_dir.exists() {
-				tracing::info!("creating the output directory {}", output_dir.display());
+				tracing::info!("creating the output directory {output_dir:?}");
 
 				fs::create_dir(&output_dir)?;
 			}
@@ -121,10 +119,7 @@ impl Run for BuildCmd {
 		let output_target_dir = output_dir.join("target");
 
 		if !cache_output && output_target_dir.exists() {
-			tracing::info!(
-				"purging previous output target directory {}",
-				output_target_dir.display()
-			);
+			tracing::info!("purging previous output target directory {output_target_dir:?}",);
 
 			fs::remove_dir_all(&output_target_dir)?;
 		}
@@ -145,34 +140,38 @@ impl Run for BuildCmd {
 		run_args.with_command(&cmd);
 		run_args.run()?;
 
-		let snake_case_rt = if let Some(name) = override_runtime_name {
-			format!("{name}_runtime")
-		} else {
-			runtime.replace("-runtime", "_runtime")
-		};
+		// https://github.com/paritytech/polkadot-sdk/blob/ca7817922148c1e6f6856138998f7135f42f3f4f/substrate/utils/wasm-builder/src/wasm_project.rs#L502.
+		let snake_case_name = runtime.replace("-", "_");
 		let output_rt =
-			output_target_dir.join("release/wbuild").join(&runtime).join(&snake_case_rt);
-		let compressed_wasm = output_rt.with_extension(WASM_EXT_COMPRESSED);
-		let ver = Wasmer::load(&compressed_wasm)?.runtime_version(true)?.spec_version;
-		let rt_name = format!("{snake_case_rt}-{ver}");
+			output_target_dir.join("release/wbuild").join(&runtime).join(&snake_case_name);
+		let compressed_rt = output_rt.with_extension(WASM_EXT_COMPRESSED);
 
-		fs::copy(compressed_wasm, output_dir.join(&rt_name).with_extension(WASM_EXT_COMPRESSED))?;
+		tracing::info!("loading {compressed_rt:?}");
+
+		let wasmer = Wasmer::load(&compressed_rt)?;
+		let ver = wasmer.runtime_version(true)?.spec_version;
+		let rt_prefix = output_dir.join(format!("{snake_case_name}-{ver}"));
+
+		util::copy(&compressed_rt, &rt_prefix.with_extension(WASM_EXT_COMPRESSED))?;
 
 		if no_compressed_only {
-			fs::copy(
-				output_rt.with_extension(WASM_EXT_COMPACT),
-				output_dir.join(&rt_name).with_extension(WASM_EXT_COMPACT),
+			util::copy(
+				&output_rt.with_extension(WASM_EXT_COMPACT),
+				&rt_prefix.with_extension(WASM_EXT_COMPACT),
 			)?;
-			fs::copy(
-				output_rt.with_extension(WASM_EXT),
-				output_dir.join(&rt_name).with_extension(WASM_EXT),
-			)?;
+			util::copy(&output_rt.with_extension(WASM_EXT), &rt_prefix.with_extension(WASM_EXT))?;
+		}
+		if !no_digest {
+			let digest_path = rt_prefix.with_extension("json");
+
+			tracing::info!("generating {digest_path:?}");
+
+			let digest = InspectCmd::new(compressed_rt, false, false, false).inspect(wasmer)?;
+
+			fs::write(&digest_path, digest)?;
 		}
 		if !cache_output {
-			tracing::info!(
-				"cleaning up the output target directory {}",
-				output_target_dir.display()
-			);
+			tracing::info!("cleaning up the output target directory {output_target_dir:?}",);
 
 			fs::remove_dir_all(&output_target_dir)?;
 		}

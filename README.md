@@ -81,8 +81,8 @@ PPR also supports using a custom Docker image. Use `ppr build --help` to get mor
 ### Runtime
 #### IMPORTANT NOTES
 - PRR makes some assumption while deal with the runtime artifacts.
-  - Runtime crate name is in `{}-runtime` format. E.G. [`polkadot-runtime`](https://github.com/polkadot-fellows/runtimes/blob/46dcafcee64fe4d8c722d071a4a0ca983fcc2f08/relay/polkadot/Cargo.toml#L2)
-  - WASM file name is in `{}_runtime.compact.compressed.wasm` format. E.G. [`polkadot_runtime.compact.compressed.wasm`](https://github.com/polkadot-fellows/runtimes/releases/tag/v1.3.4)
+  - Runtime crate name must be in `{}-runtime` format. E.G. [`polkadot-runtime`](https://github.com/polkadot-fellows/runtimes/blob/46dcafcee64fe4d8c722d071a4a0ca983fcc2f08/relay/polkadot/Cargo.toml#L2)
+  - WASM file name must be in `{}_runtime.compact.compressed.wasm` format. E.G. [`polkadot_runtime.compact.compressed.wasm`](https://github.com/polkadot-fellows/runtimes/releases/tag/v1.3.4)
 
 ### GitHub
 

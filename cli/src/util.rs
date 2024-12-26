@@ -1,8 +1,18 @@
 // std
-use std::time::SystemTime;
+use std::{fs, path::Path, time::SystemTime};
 // crates.io
 use chrono::{DateTime, SecondsFormat, Utc};
 use serde::Serializer;
+// self
+use crate::prelude::*;
+
+pub fn copy(from: &Path, to: &Path) -> Result<()> {
+	tracing::info!("copying {from:?} to {to:?}");
+
+	fs::copy(from, to)?;
+
+	Ok(())
+}
 
 pub fn ser_system_time<S>(time: &SystemTime, serializer: S) -> Result<S::Ok, S::Error>
 where

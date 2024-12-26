@@ -8,6 +8,15 @@ inputs:
   runtime:
     description: "Target runtime to inspect."
     required: true
+  no-check-version:
+    description: "Whether to check the runtime version in the `ParachainSystem::authorized_upgrade` call."
+    required: false
+  beautify:
+    description: "Whether to beautify the JSON output."
+    required: false
+  verbose:
+    description: "Whether to print verbose output."
+    required: false
 
 runs:
   using: "composite"
@@ -15,7 +24,7 @@ runs:
     - name: Setup Polkadot Runtime Releaser
       shell: bash
       run: curl
-        -L https://github.com/hack-ink/polkadot-runtime-releaser/releases/download/v0.1.8/prr-x86_64-unknown-linux-gnu.tar.gz |
+        -L https://github.com/hack-ink/polkadot-runtime-releaser/releases/download/v0.1.9/prr-x86_64-unknown-linux-gnu.tar.gz |
         tar xz &&
         chmod u+x prr &&
         mv prr /usr/local/bin/prr
@@ -23,7 +32,18 @@ runs:
       id: inspect
       shell: bash
       run: |
-        RESULT=$(prr inspect ${{ inputs.runtime }})
+        CMD="prr inspect ${{ inputs.runtime }}"
+        if [ ! -z "${{ inputs.no-check-version }}" ]; then
+          CMD="$CMD --no-check-version"
+        fi
+        if [ ! -z "${{ inputs.beautify }}" ]; then
+          CMD="$CMD -b"
+        fi
+        if [ ! -z "${{ inputs.verbose }}" ]; then
+          CMD="$CMD -v"
+        fi
+
+        RESULT=$(${CMD})
         echo "result=${RESULT}" >> "$GITHUB_OUTPUT"
 
 outputs:
