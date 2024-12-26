@@ -34,7 +34,7 @@ pub struct BuildCmd {
 	/// This won't take effect if there is a <rust-toolchain.toml> file in the project directory,
 	/// and that's the recommended way to specify the toolchain version.
 	#[arg(long, short, value_name = "VER", verbatim_doc_comment)]
-	toolchain_version: Option<String>,
+	toolchain_ver: Option<String>,
 	/// Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
 	#[arg(
 		long,
@@ -85,7 +85,7 @@ impl Run for BuildCmd {
 			features,
 			no_compressed_only,
 			no_digest,
-			toolchain_version,
+			toolchain_ver,
 			image_version,
 			override_docker_image,
 			workdir,
@@ -95,7 +95,7 @@ impl Run for BuildCmd {
 		} = self;
 		let workdir = workdir.map(|w| w.canonicalize()).unwrap_or_else(env::current_dir)?;
 
-		rust::gen_toolchain_config(toolchain_version, &workdir)?;
+		rust::gen_toolchain_config(toolchain_ver, &workdir)?;
 
 		let output_dir = {
 			if !output_dir.exists() {

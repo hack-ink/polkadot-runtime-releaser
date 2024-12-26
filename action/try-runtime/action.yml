@@ -1,25 +1,37 @@
 name: "Polkadot Runtime Releaser Try Runtime Action"
-description: "Polkadot Runtime Releaser Try Runtime Action."
+description: >
+  Provides a way to run try-runtime for the polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
 branding:
   icon: "check-circle"
   color: "blue"
 
 inputs:
   runtime:
-    description: "Target runtime to build."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: true
   features:
-    description: "Features to enable for the runtime."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
   toolchain-ver:
-    description: "Rust toolchain version to use."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
-  try-runtime-version:
-    description: "Try Runtime CLI version to use."
+  try-runtime-ver:
+    description: >
+      Try Runtime CLI version to use. Default is 0.8.0.
     required: false
     default: "0.8.0"
   uri:
-    description: "Node URI to use."
+    description: >
+      Node URI to use.
     required: true
 
 runs:
@@ -28,7 +40,7 @@ runs:
     - name: Setup try runtime CLI
       shell: bash
       run: curl
-        -L https://github.com/paritytech/try-runtime-cli/releases/download/v${{ inputs.try-runtime-version }}/try-runtime-x86_64-unknown-linux-musl
+        -L https://github.com/paritytech/try-runtime-cli/releases/download/v${{ inputs.try-runtime-ver }}/try-runtime-x86_64-unknown-linux-musl
         -o try-runtime &&
         chmod +x try-runtime &&
         mv try-runtime /usr/local/bin/try-runtime
@@ -38,18 +50,19 @@ runs:
         runtime: ${{ inputs.runtime }}
         features: ${{ inputs.features }}
         toolchain-ver: ${{ inputs.toolchain-ver }}
+        output-dir: .
     - name: Try runtime
       id: try_runtime
       shell: bash
       run: |
-        echo "output<<EOF" >> $GITHUB_OUTPUT
-        try-runtime \
-          --runtime $(find ./polkadot-runtime-releaser-output \
-          -name "*.compact.compressed.wasm") \
+        OUTPUT=$(try-runtime \
+          --runtime "$(ls *_runtime-*.compact.compressed.wasm)" \
           on-runtime-upgrade \
           live \
-          -u ${{ inputs.uri }} \
-          2>&1 >> $GITHUB_OUTPUT
+          -u "${{ inputs.uri }}" 2>&1)
+
+        echo "result<<EOF" >> $GITHUB_OUTPUT
+        echo "$OUTPUT" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
     - name: Comment result
       uses: peter-evans/create-or-update-comment@v4
@@ -57,9 +70,9 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           <details>
-          <summary>Try Runtime Output for ${{ inputs.runtime }}</summary>
+          <summary>try-runtime result of `${{ inputs.runtime }}`</summary>
 
           ```
-          ${{ steps.try_runtime.outputs.output }}
+          ${{ steps.try_runtime.outputs.result }}
           ```
           </details>

@@ -1,30 +1,40 @@
-name: "Polkadot Runtime Releaser Build Action"
-description: "Polkadot Runtime Releaser Build Action."
+name: "Polkadot Runtime Releaser Override Action"
+description: >
+  Provides a way to build and commit the polkadot-sdk-based override runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
 branding:
   icon: "check-circle"
   color: "blue"
 
 inputs:
   repository:
-    description: "Repository to fetch the runtime code from."
+    description: >
+      Repository to fetch the runtime code from.
     required: true
   ref:
-    description: "Branch, tag, or commit of the runtime repository to fetch."
+    description: >
+      Branch, tag, or commit of the runtime repository to fetch.
     required: true
   runtime:
-    description: "Target runtime to build."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: true
-  override-runtime-name:
-    description: "The name to use matching the runtime artifacts."
-    required: false
   features:
-    description: "Features to enable for the runtime."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: true
   toolchain-ver:
-    description: "Rust toolchain version to use."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
   token:
-    description: "GitHub token for authentication."
+    description: >
+      Use a Personal Access Token (PAT) if `GITHUB_TOKEN` does not have enough permissions to commit the overrides.
     required: true
     default: ${{ github.token }}
 
@@ -58,7 +68,7 @@ runs:
         cd override
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git pull --rebase origin ${{ inputs.runtime }}
         git add .
         git commit -m "Override \`${{ inputs.ref }}\`"
+        git pull --rebase origin ${{ inputs.runtime }}
         git push

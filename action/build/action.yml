@@ -1,24 +1,40 @@
 name: "Polkadot Runtime Releaser Build Action"
-description: "Polkadot Runtime Releaser Build Action."
+description: >
+  Provides a way to build polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
 branding:
   icon: "check-circle"
   color: "blue"
 
 inputs:
   runtime:
-    description: "Target runtime to build."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: true
   features:
-    description: "Features to enable for the runtime."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
   toolchain-ver:
-    description: "Rust toolchain version to use. Default is reading `rust-toolchain.toml` or `stable`."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
   workdir:
-    description: "Working directory for the runtime. Default is the current directory."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
   output-dir:
-    description: "Output directory for the runtime. Default is `polkadot-runtime-releaser-output`."
+    description: >
+      Use `prr build --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
 
 runs:

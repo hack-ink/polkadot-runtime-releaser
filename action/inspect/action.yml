@@ -1,21 +1,34 @@
 name: "Polkadot Runtime Releaser Inspect Action"
-description: "Polkadot Runtime Releaser Inspect Action."
+description: >
+  Provides a way to inspect polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
 branding:
   icon: "check-circle"
   color: "blue"
 
 inputs:
   runtime:
-    description: "Target runtime to inspect."
+    description: >
+      Use `prr inspect --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: true
   no-check-version:
-    description: "Whether to check the runtime version in the `ParachainSystem::authorized_upgrade` call."
+    description: >
+      Use `prr inspect --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage`ParachainSystem::authorized_upgrade` call."
     required: false
   beautify:
-    description: "Whether to beautify the JSON output."
+    description: >
+      Use `prr inspect --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
   verbose:
-    description: "Whether to print verbose output."
+    description: >
+      Use `prr inspect --help` to get more information.
+
+      Or check the https://github.com/hack-ink/polkadot-runtime-releaser/blob/main/README.md#usage
     required: false
 
 runs:
