@@ -90,7 +90,7 @@ runs:
     - name: Comment result
       uses: peter-evans/create-or-update-comment@v4
       with:
-        issue-number: ${{ github.event.pull_request.number }}
+        issue-number: ${{ github.event.issue.number }}
         body: |
           <details>
           <summary>try-runtime result of `${{ inputs.runtime }}`</summary>
