@@ -50,6 +50,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: React comment
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        comment-id: ${{ github.event.comment.id }}
+        reactions: rocket,eyes
     - name: Setup try runtime CLI
       shell: bash
       run: curl
@@ -82,7 +87,7 @@ runs:
 
         CMD="$CMD live -u ${{ inputs.uri }}"
         echo "running $CMD"
-        OUTPUT=$($CMD 2>&1 || true)
+        OUTPUT=$(eval "$CMD" 2>&1 | grep -vE '^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]' || true)
 
         echo "result<<EOF" >> $GITHUB_OUTPUT
         echo "$OUTPUT" >> $GITHUB_OUTPUT
