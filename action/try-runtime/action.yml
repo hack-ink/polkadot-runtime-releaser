@@ -69,14 +69,14 @@ runs:
       shell: bash
       run: |
         CMD="try-runtime \
-          --runtime \"$(ls *_runtime-*.compact.compressed.wasm)\" \
+          --runtime $(ls *_runtime-*.compact.compressed.wasm) \
           on-runtime-upgrade \
           --blocktime ${{ inputs.blocktime }}"
 
-        if [ -n "${{ inputs.disable-spec-version-check }}" ]; then
+        if [ "${{ inputs.disable-spec-version-check }}" = "true" ]; then
           CMD="$CMD --disable-spec-version-check"
         fi
-        if [ -n "${{ inputs.disable-idempotency-checks }}" ]; then
+        if [ "${{ inputs.disable-idempotency-checks }}" = "true" ]; then
           CMD="$CMD --disable-idempotency-checks"
         fi
 
