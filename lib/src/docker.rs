@@ -1,9 +1,10 @@
 //! Polkadot Runtime Releaser Docker component.
 
 // std
-use std::fmt::Display;
-// crates.io
-use atty::Stream;
+use std::{
+	fmt::Display,
+	io::{self, IsTerminal},
+};
 // self
 use crate::{
 	prelude::*,
@@ -57,7 +58,7 @@ impl<'a> RunArgs<'a> {
 }
 impl CliArgs for RunArgs<'_> {
 	fn to_cli_args(&self) -> Vec<&str> {
-		let maybe_it = if atty::is(Stream::Stdin) { "-it" } else { "-t" };
+		let maybe_it = if io::stdin().is_terminal() { "-it" } else { "-t" };
 		let mut args = vec!["run", maybe_it, "--rm"];
 
 		for env in &self.envs {

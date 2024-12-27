@@ -11,7 +11,6 @@ version.workspace    = true
 
 [dependencies]
 # crates.io
-atty                     = { workspace = true }
 blake2                   = { workspace = true }
 frame-metadata           = { workspace = true }
 md-5                     = { workspace = true }
