@@ -28,7 +28,20 @@ inputs:
     description: >
       Try Runtime CLI version to use. Default is 0.8.0.
     required: false
-    default: "0.8.0"
+    default: 0.8.0
+  blocktime:
+    description: >
+      Block time of the runtime.
+    required: false
+    default: "6000"
+  disable-spec-version-check:
+    description: >
+      Whether to skip enforcing that the new runtime `spec_version` is greater or equal to the existing `spec_version`.
+    required: false
+  disable-idempotency-checks:
+    description: >
+      Whether to disable migration idempotency checks.
+    required: false
   uri:
     description: >
       Node URI to use.
@@ -55,11 +68,21 @@ runs:
       id: try_runtime
       shell: bash
       run: |
-        OUTPUT=$(try-runtime \
-          --runtime "$(ls *_runtime-*.compact.compressed.wasm)" \
+        CMD="try-runtime \
+          --runtime \"$(ls *_runtime-*.compact.compressed.wasm)\" \
           on-runtime-upgrade \
-          live \
-          -u "${{ inputs.uri }}" 2>&1)
+          --blocktime ${{ inputs.blocktime }}"
+
+        if [ -n "${{ inputs.disable-spec-version-check }}" ]; then
+          CMD="$CMD --disable-spec-version-check"
+        fi
+        if [ -n "${{ inputs.disable-idempotency-checks }}" ]; then
+          CMD="$CMD --disable-idempotency-checks"
+        fi
+
+        CMD="$CMD live -u ${{ inputs.uri }}"
+        echo "running $CMD"
+        OUTPUT=$($CMD 2>&1 || true)
 
         echo "result<<EOF" >> $GITHUB_OUTPUT
         echo "$OUTPUT" >> $GITHUB_OUTPUT

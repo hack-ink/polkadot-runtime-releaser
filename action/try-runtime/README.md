@@ -10,5 +10,7 @@ Provides a way to run try-runtime for the polkadot-sdk-based runtime in GitHub A
         features: on-chain-release-build
         toolchain-ver: 1.81.0
         try-runtime-ver: 0.8.0
-        tri: wss://rpc.polkadot.io
+        disable-spec-version-check: true
+        disable-idempotency-checks: false
+        tri: wss://polkadot.public.curie.radiumblock.co
 ```
