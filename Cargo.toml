@@ -42,7 +42,7 @@ tracing-subscriber       = { version = "0.3" }
 users                    = { version = "0.11" }
 vergen-gitcl             = { version = "1.0" }
 # self
-prr-lib = { version = "0.1", package = "polkadot-runtime-releaser-lib", path = "lib" }
+prr-lib = { version = "0.2", package = "polkadot-runtime-releaser-lib", path = "lib" }
 
 [profile.ci-dev]
 incremental = false
