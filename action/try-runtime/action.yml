@@ -72,6 +72,8 @@ runs:
     - name: Try runtime
       id: try_runtime
       shell: bash
+      # Remove `grep -vE '[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]'`.
+      # https://github.com/paritytech/polkadot-sdk/issues/7010
       run: |
         CMD="try-runtime \
           --runtime $(ls *_runtime-*.compact.compressed.wasm) \
@@ -86,7 +88,7 @@ runs:
         fi
 
         CMD="$CMD live -u ${{ inputs.uri }}"
-        OUTPUT=$(eval "$CMD" 2>&1 | grep -vE '^[[:space:]]*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]' || true)
+        OUTPUT=$(eval "$CMD" 2>&1 | grep -vE '[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]' || true)
 
         echo "result<<EOF" >> $GITHUB_OUTPUT
         echo "$OUTPUT" >> $GITHUB_OUTPUT
