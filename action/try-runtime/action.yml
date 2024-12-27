@@ -99,7 +99,7 @@ runs:
         issue-number: ${{ github.event.issue.number }}
         body: |
           <details>
-          <summary>try-runtime result of `${{ inputs.runtime }}`</summary>
+          <summary>try-runtime result of <code>${{ inputs.runtime }}</code></summary>
 
           ```
           ${{ steps.try_runtime.outputs.result }}
