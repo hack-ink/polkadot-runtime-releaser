@@ -11,7 +11,7 @@ edition    = "2021"
 homepage   = "https://hack.ink/polkadot-runtime-releaser"
 license    = "GPL-3.0"
 repository = "https://github.com/hack-ink/polkadot-runtime-releaser"
-version    = "0.1.9"
+version    = "0.2.0"
 
 [workspace.dependencies]
 # crates.io

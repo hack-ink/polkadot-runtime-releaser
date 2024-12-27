@@ -2,7 +2,7 @@ FROM ubuntu:25.04
 
 LABEL maintainer="x@acg.box"
 LABEL description="An environment for constructing a deterministic polkadot-sdk-based runtime."
-LABEL version="0.1.9"
+LABEL version="0.2.0"
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

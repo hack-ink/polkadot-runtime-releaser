@@ -40,7 +40,7 @@ pub struct BuildCmd {
 		long,
 		short = 'v',
 		value_name = "VER",
-		default_value_t = String::from("0.1.9"),
+		default_value_t = String::from("0.2.0"),
 		verbatim_doc_comment,
 		conflicts_with = "override_docker_image"
 	)]

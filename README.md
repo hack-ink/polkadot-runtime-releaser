@@ -133,7 +133,7 @@ Options:
   -v, --image-version <VER>
           Image version of the <ghcr.io/hack-ink/polkadot-runtime-releaser>.
 
-          [default: 0.1.9]
+          [default: 0.2.0]
 
   -i, --override-docker-image <REPOSITORY>
           Overwrite the default docker image with the specified one.

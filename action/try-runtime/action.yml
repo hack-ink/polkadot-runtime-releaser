@@ -86,8 +86,7 @@ runs:
         fi
 
         CMD="$CMD live -u ${{ inputs.uri }}"
-        echo "running $CMD"
-        OUTPUT=$(eval "$CMD" 2>&1 | grep -vE '^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]' || true)
+        OUTPUT=$(eval "$CMD" 2>&1 | grep -vE '^[[:space:]]*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]' || true)
 
         echo "result<<EOF" >> $GITHUB_OUTPUT
         echo "$OUTPUT" >> $GITHUB_OUTPUT
