@@ -55,7 +55,7 @@ impl InspectCmd {
 }
 impl Run for InspectCmd {
 	fn run(self) -> Result<()> {
-		let wasmer = Wasmer::load(&self.path)?;
+		let wasmer = Wasmer::load_from_file(&self.path)?;
 		let json = self.inspect(wasmer)?;
 
 		println!("{json}");

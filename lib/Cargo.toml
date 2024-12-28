@@ -15,7 +15,6 @@ blake2                   = { workspace = true }
 frame-metadata           = { workspace = true }
 md-5                     = { workspace = true }
 parity-scale-codec       = { workspace = true }
-reqwew                   = { workspace = true, features = ["blocking", "charset", "http2", "json", "reqwest", "rustls-tls"] }
 sc-executor              = { workspace = true }
 sc-executor-common       = { workspace = true }
 serde                    = { workspace = true, features = ["derive"] }
@@ -26,3 +25,7 @@ sp-maybe-compressed-blob = { workspace = true }
 sp-state-machine         = { workspace = true }
 thiserror                = { workspace = true }
 tracing                  = { workspace = true }
+
+[dev-dependencies]
+array-bytes = { workspace = true }
+reqwew      = { workspace = true, features = ["blocking", "charset", "http2", "json", "reqwest", "rustls-tls"] }

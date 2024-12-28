@@ -55,11 +55,18 @@ impl<'a> RunArgs<'a> {
 
 		system::run(Self::PROGRAM, &self.to_cli_args())
 	}
+
+	fn maybe_it() -> &'static str {
+		if io::stdin().is_terminal() {
+			"-it"
+		} else {
+			"-t"
+		}
+	}
 }
 impl CliArgs for RunArgs<'_> {
 	fn to_cli_args(&self) -> Vec<&str> {
-		let maybe_it = if io::stdin().is_terminal() { "-it" } else { "-t" };
-		let mut args = vec!["run", maybe_it, "--rm"];
+		let mut args = vec!["run", Self::maybe_it(), "--rm"];
 
 		for env in &self.envs {
 			args.extend_from_slice(&["-e", env]);
@@ -90,7 +97,7 @@ fn to_cli_args_should_work() {
 			cli_args,
 			vec![
 				"run",
-				"-t",
+				RunArgs::maybe_it(),
 				"--rm",
 				"-e",
 				"FOO=bar",

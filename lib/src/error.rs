@@ -15,8 +15,6 @@ pub enum Error {
 	#[error(transparent)]
 	Executor(#[from] sc_executor::error::Error),
 	#[error(transparent)]
-	Reqwew(#[from] reqwew::error::Error),
-	#[error(transparent)]
 	SerdeJson(#[from] serde_json::Error),
 	#[error(transparent)]
 	Wasm(#[from] sc_executor_common::error::WasmError),

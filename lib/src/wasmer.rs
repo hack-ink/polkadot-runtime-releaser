@@ -1,5 +1,7 @@
 //! Polkadot Runtime Releaser WASM component.
 
+#[cfg(test)] mod test;
+
 // std
 use std::{borrow::Cow, fs, path::Path};
 // crates.io
@@ -21,7 +23,7 @@ pub struct Wasmer {
 }
 impl Wasmer {
 	/// Load WASM runtime from the given path.
-	pub fn load<P>(path: P) -> Result<Self>
+	pub fn load_from_file<P>(path: P) -> Result<Self>
 	where
 		P: AsRef<Path>,
 	{

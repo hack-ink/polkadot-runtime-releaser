@@ -148,7 +148,7 @@ impl Run for BuildCmd {
 
 		tracing::info!("loading {compressed_rt:?}");
 
-		let wasmer = Wasmer::load(&compressed_rt)?;
+		let wasmer = Wasmer::load_from_file(&compressed_rt)?;
 		let ver = wasmer.runtime_version(true)?.spec_version;
 		let rt_prefix = output_dir.join(format!("{snake_case_name}-{ver}"));
 
