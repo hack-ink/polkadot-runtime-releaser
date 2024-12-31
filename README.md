@@ -192,6 +192,6 @@ prr inspect <RUNTIME_WASM_FILE> -b
 
 <div align="right">
 
-#### License
+### License
 <sup>Licensed under [GPL-3.0](LICENSE).</sup>
 </div>
