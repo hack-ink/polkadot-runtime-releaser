@@ -1,5 +1,5 @@
 ## Polkadot Runtime Releaser Try-Runtime Action
-Provides a way to run try-runtime for the polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
+Provides a way to run try-runtime for the polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PRR) CLI.
 
 ### Example
 ```yaml

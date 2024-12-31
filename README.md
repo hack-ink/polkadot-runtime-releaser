@@ -60,18 +60,18 @@ profile    = "minimal"
 targets    = ["wasm32-unknown-unknown"]
 ```
 
-With this file in place, PPR automatically uses the specified Rust toolchain version. This is the best way to manage the Rust toolchain version for your project.
+With this file in place, PRR automatically uses the specified Rust toolchain version. This is the best way to manage the Rust toolchain version for your project.
 
-If you don't have a `rust-toolchain.toml` file, PPR will generate one with the `stable` version for you by default.
+If you don't have a `rust-toolchain.toml` file, PRR will generate one with the `stable` version for you by default.
 
-PPR also supports configuring the Rust toolchain version when no `rust-toolchain.toml` file is present in the project's root. Use `ppr build --help` for more information.
+PRR also supports configuring the Rust toolchain version when no `rust-toolchain.toml` file is present in the project's root. Use `prr build --help` for more information.
 
 ### Docker
 Another crucial part of building a deterministic runtime is using the same environment to build the runtime. We use Docker to create a consistent environment.
 
 The default image is [polkadot-runtime-releaser](https://ghcr.io/hack-ink/polkadot-runtime-releaser), maintained by the hack-ink community. It provides a well-configured environment for building the runtime. Each release is pinned to a specific version of this image to ensure a deterministic environment. However, you can use the `-v` or `--image-version` flag to specify a particular version.
 
-PPR also supports using a custom Docker image. Run `ppr build --help` for more information.
+PRR also supports using a custom Docker image. Run `prr build --help` for more information.
 
 ### Runtime
 #### REQUIREMENT

@@ -1,5 +1,5 @@
 ## Polkadot Runtime Releaser Build Action
-Provides a way to build polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
+Provides a way to build polkadot-sdk-based runtime in GitHub Action with the Polkadot Runtime Releaser (PRR) CLI.
 
 ### Example
 ```yaml

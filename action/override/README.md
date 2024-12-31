@@ -1,5 +1,5 @@
 ## Polkadot Runtime Releaser Override Action
-Provides a way to build and commit the polkadot-sdk-based override runtime in GitHub Action with the Polkadot Runtime Releaser (PPR) CLI.
+Provides a way to build and commit the polkadot-sdk-based override runtime in GitHub Action with the Polkadot Runtime Releaser (PRR) CLI.
 
 ### Example
 ```yaml
