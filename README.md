@@ -3,11 +3,15 @@
 # Polkadot Runtime Releaser
 ### Streamline the process of releasing a new runtime for polkadot-sdk-based runtime.
 
+<img width="400" src="https://raw.githubusercontent.com/w3f/Grants-Program/master/static/img/badge_black.svg"/>
+
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Checks](https://github.com/hack-ink/polkadot-runtime-releaser/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/hack-ink/polkadot-runtime-releaser/actions/workflows/checks.yml)
 [![Release](https://github.com/hack-ink/polkadot-runtime-releaser/actions/workflows/release.yml/badge.svg)](https://github.com/hack-ink/polkadot-runtime-releaser/actions/workflows/release.yml)
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/hack-ink/polkadot-runtime-releaser)](https://github.com/hack-ink/polkadot-runtime-releaser/tags)
 [![GitHub last commit](https://img.shields.io/github/last-commit/hack-ink/polkadot-runtime-releaser?color=red&style=plastic)](https://github.com/hack-ink/polkadot-runtime-releaser)
+[![GitHub code lines](https://tokei.rs/b1/github/hack-ink/polkadot-runtime-releaser)](https://github.com/hack-ink/polkadot-runtime-releaser)
+![Alt](https://repobeats.axiom.co/api/embed/93cbac9061be640cd54747602ef250e91a34fd52.svg "Repobeats analytics image")
 </div>
 
 
