@@ -80,6 +80,12 @@ PRR also supports using a custom Docker image. Run `prr build --help` for more i
   - The generated WASM file name must be in `{}_runtime.compact.compressed.wasm` format. For example, see [`polkadot_runtime.compact.compressed.wasm`](https://github.com/polkadot-fellows/runtimes/releases/tag/v1.3.4).
 
 ### GitHub
+> Why do we need to override the runtime?
+>
+> Always keep the on-chain runtime as minimal as possible which can help reduce the runtime size and improve the performance.
+> Override with the `force-debug` runtime, you can get more debug information in the runtime log.
+> Override with the `evm-tracing` runtime, you can enable the EVM tracing feature in the runtime.
+
 To fully leverage PRR, set up two repositories for your project—one for the runtime overrides and the other for the runtime itself. This is a commonly recommended practice. Some notable projects that follow this approach include:
 
 - Astar
