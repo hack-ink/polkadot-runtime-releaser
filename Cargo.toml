@@ -25,7 +25,7 @@ frame-metadata           = { version = "18.0" }
 ipfs-cid                 = { version = "2.0" }
 md-5                     = { version = "0.10" }
 parity-scale-codec       = { version = "3.7" }
-reqwew                   = { version = "0.6", default-features = false }
+reqwew                   = { version = "0.7", default-features = false }
 sc-executor              = { version = "0.40" }
 sc-executor-common       = { version = "0.35" }
 serde                    = { version = "1.0" }
