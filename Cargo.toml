@@ -31,7 +31,7 @@ sc-executor-common       = { version = "0.35" }
 serde                    = { version = "1.0" }
 serde_json               = { version = "1.0" }
 sha2                     = { version = "0.10" }
-sp-core                  = { version = "34.0" }
+sp-core                  = { version = "38.1" }
 sp-maybe-compressed-blob = { version = "11.0" }
 sp-state-machine         = { version = "0.43" }
 thiserror                = { version = "2.0" }
